@@ -9,7 +9,12 @@ dist/
 build/
 backend/models/pretrained/pose_landmarker_heavy.task
 data/*.db
-data/evaluation/
+data/evaluation/**/*.mp4
+data/evaluation/**/*.avi
+data/evaluation/**/*.MOV
+data/evaluation/**/*.mov
+data/evaluation/**/*.gif
+data/evaluation/**/*.GIF
 *.DS_Store
 .vscode/
 .idea/

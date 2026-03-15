@@ -1,7 +1,7 @@
 """
 AI Model Orchestrator
 
-Coordinates the flow between four AI models in a multi-stage pipeline:
+Coordinates the flow between six AI models in a multi-stage pipeline:
 
   Stage 1: Pose Estimation (MediaPipe BlazePose) — Computer Vision domain
   Stage 2a: ML Form Classifier (scikit-learn SVM) — Classification domain

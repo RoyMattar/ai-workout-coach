@@ -77,7 +77,28 @@ Open `http://localhost:8000/app` in your browser.
 python -m pytest tests/ -v
 ```
 
-46 tests covering all modules (pose estimation, form classification, exercise analyzers, feedback generation, TTS, orchestration, API).
+123 tests covering all modules (pose estimation, form classification, exercise analyzers, feedback generation, TTS, orchestration, API, auth, database, coach personas).
+
+### Docker Deployment
+
+```bash
+docker-compose up --build
+```
+
+The app will be available at `http://localhost:8000/app`. Configure your OpenAI API key in `.env` before building.
+
+### Evaluation Datasets
+
+The evaluation scripts expect video datasets in `data/evaluation/`. These are not included in the repo due to file size. Download them from Kaggle:
+
+1. [LSTM Push-Up Videos](https://www.kaggle.com/datasets/mohamadashrafsalama/pushup) → `data/evaluation/LSTM Exercise Classification - Push Up Videos/`
+2. [Workout/Exercises Video](https://www.kaggle.com/datasets/hasyimabdillah/workoutfitness-video) → `data/evaluation/Workout:Exercises Video/`
+
+Then run:
+```bash
+python -m tools.evaluate_videos      # Evaluate on real video data
+python -m tools.compare_form_models  # Compare 7 model architectures
+```
 
 ### Training the Form Classifier
 
