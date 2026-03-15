@@ -1,0 +1,25 @@
+{
+  "model": "SVM (RBF)",
+  "accuracy": 0.9962962962962962,
+  "features": [
+    "left_knee_angle",
+    "right_knee_angle",
+    "avg_knee_angle",
+    "left_elbow_angle",
+    "right_elbow_angle",
+    "avg_elbow_angle",
+    "left_hip_angle",
+    "right_hip_angle",
+    "torso_angle",
+    "knee_angle_diff",
+    "shoulder_hip_alignment"
+  ],
+  "classes": [
+    "bicep_curl",
+    "rest",
+    "shoulder_press",
+    "tricep"
+  ],
+  "training_samples": 2700,
+  "source": "Kaggle Multi-Class Exercise Poses (dp5995)"
+}

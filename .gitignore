@@ -1,0 +1,15 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+backend/models/pretrained/pose_landmarker_heavy.task
+data/*.db
+data/evaluation/
+*.DS_Store
+.vscode/
+.idea/

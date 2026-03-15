@@ -1,0 +1,90 @@
+{
+  "exercise": "squat",
+  "best_model": "SVM (RBF)",
+  "features": [
+    "avg_knee_angle",
+    "left_knee_angle",
+    "right_knee_angle",
+    "torso_angle",
+    "left_hip_angle",
+    "right_hip_angle",
+    "knee_angle_diff",
+    "knee_ankle_x_offset",
+    "shoulder_hip_alignment"
+  ],
+  "labels": {
+    "0": "good_form",
+    "1": "minor_issues",
+    "2": "major_issues"
+  },
+  "error_types": [
+    "insufficient_depth",
+    "excessive_forward_lean",
+    "knee_cave",
+    "asymmetric_depth"
+  ],
+  "training_samples": 3000,
+  "cross_validation_results": {
+    "KNN (k=5)": {
+      "mean_accuracy": 0.8886666666666667,
+      "std_accuracy": 0.00590668171555646,
+      "all_scores": [
+        0.8933333333333333,
+        0.88,
+        0.895,
+        0.8833333333333333,
+        0.8916666666666667
+      ]
+    },
+    "SVM (RBF)": {
+      "mean_accuracy": 0.9003333333333334,
+      "std_accuracy": 0.005206833117271117,
+      "all_scores": [
+        0.91,
+        0.9,
+        0.8966666666666666,
+        0.895,
+        0.9
+      ]
+    },
+    "Random Forest": {
+      "mean_accuracy": 0.9,
+      "std_accuracy": 0.004830458915396484,
+      "all_scores": [
+        0.9033333333333333,
+        0.895,
+        0.9033333333333333,
+        0.8933333333333333,
+        0.905
+      ]
+    },
+    "Gradient Boosting": {
+      "mean_accuracy": 0.89,
+      "std_accuracy": 0.008881941729649494,
+      "all_scores": [
+        0.8866666666666667,
+        0.8933333333333333,
+        0.905,
+        0.8783333333333333,
+        0.8866666666666667
+      ]
+    }
+  },
+  "confusion_matrix": [
+    [
+      1295,
+      5,
+      0
+    ],
+    [
+      279,
+      721,
+      0
+    ],
+    [
+      0,
+      0,
+      700
+    ]
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "exercise": "pushup",
+  "best_model": "SVM (RBF)",
+  "features": [
+    "avg_elbow_angle",
+    "left_elbow_angle",
+    "right_elbow_angle",
+    "hip_deviation",
+    "torso_angle",
+    "left_hip_angle",
+    "right_hip_angle",
+    "shoulder_width_ratio"
+  ],
+  "labels": {
+    "0": "good_form",
+    "1": "minor_issues",
+    "2": "major_issues"
+  },
+  "error_types": [
+    "insufficient_depth",
+    "hip_sag",
+    "hip_pike",
+    "elbow_flare"
+  ],
+  "training_samples": 3000,
+  "cross_validation_results": {
+    "KNN (k=5)": {
+      "mean_accuracy": 0.9853333333333334,
+      "std_accuracy": 0.004642796092394718,
+      "all_scores": [
+        0.9916666666666667,
+        0.98,
+        0.9866666666666667,
+        0.98,
+        0.9883333333333333
+      ]
+    },
+    "SVM (RBF)": {
+      "mean_accuracy": 0.9903333333333334,
+      "std_accuracy": 0.00476095228569525,
+      "all_scores": [
+        0.9933333333333333,
+        0.9866666666666667,
+        0.9916666666666667,
+        0.9833333333333333,
+        0.9966666666666667
+      ]
+    },
+    "Random Forest": {
+      "mean_accuracy": 0.99,
+      "std_accuracy": 0.00235702260395515,
+      "all_scores": [
+        0.9916666666666667,
+        0.9866666666666667,
+        0.9933333333333333,
+        0.9883333333333333,
+        0.99
+      ]
+    },
+    "Gradient Boosting": {
+      "mean_accuracy": 0.9896666666666667,
+      "std_accuracy": 0.00339934634239517,
+      "all_scores": [
+        0.9933333333333333,
+        0.9866666666666667,
+        0.99,
+        0.985,
+        0.9933333333333333
+      ]
+    }
+  },
+  "confusion_matrix": [
+    [
+      1292,
+      8,
+      0
+    ],
+    [
+      12,
+      988,
+      0
+    ],
+    [
+      0,
+      0,
+      700
+    ]
+  ]
+}

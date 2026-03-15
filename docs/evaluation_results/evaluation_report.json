@@ -1,0 +1,134 @@
+{
+  "exercise_recognizer": {
+    "accuracy": 0.9962962962962962,
+    "std": 0.0023424278964210075,
+    "classification_report": {
+      "bicep_curl": {
+        "precision": 0.9987577639751553,
+        "recall": 1.0,
+        "f1-score": 0.9993784959602238,
+        "support": 804.0
+      },
+      "rest": {
+        "precision": 0.9926470588235294,
+        "recall": 0.9975369458128078,
+        "f1-score": 0.995085995085995,
+        "support": 406.0
+      },
+      "shoulder_press": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 774.0
+      },
+      "tricep": {
+        "precision": 1.0,
+        "recall": 0.9958100558659218,
+        "f1-score": 0.9979006298110566,
+        "support": 716.0
+      },
+      "accuracy": 0.9985185185185185,
+      "macro avg": {
+        "precision": 0.9978512056996711,
+        "recall": 0.9983367504196824,
+        "f1-score": 0.9980912802143188,
+        "support": 2700.0
+      },
+      "weighted avg": {
+        "precision": 0.9985244252290288,
+        "recall": 0.9985185185185185,
+        "f1-score": 0.9985192872969075,
+        "support": 2700.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        804,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        405,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        774,
+        0
+      ],
+      [
+        0,
+        3,
+        0,
+        713
+      ]
+    ]
+  },
+  "form_classifiers": {
+    "squat": {
+      "accuracy": 0.9003333333333334,
+      "std": 0.005206833117271117
+    },
+    "pushup": {
+      "accuracy": 0.9903333333333334,
+      "std": 0.00476095228569525
+    }
+  },
+  "pipeline_latency": {
+    "pose_estimation_ms": {
+      "mean": 8.24,
+      "std": 0.54,
+      "min": 7.8,
+      "max": 10.94
+    },
+    "ml_classification_ms": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "rule_analysis_ms": {
+      "mean": 0.01,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.01
+    },
+    "fusion_ms": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "feedback_ms": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "total_ms": {
+      "mean": 8.25,
+      "std": 0.54,
+      "min": 7.81,
+      "max": 10.95
+    },
+    "fps": 121.2
+  },
+  "summary": {
+    "total_models_evaluated": 3,
+    "datasets_used": [
+      "Kaggle Multi-Class Exercise Poses (dp5995) - 2700 samples",
+      "Synthetic generated data - 3000 samples per exercise"
+    ],
+    "key_findings": [
+      "Exercise recognition: 99.6% accuracy on real data",
+      "Squat form classifier: 90.0% accuracy",
+      "Push-up form classifier: 99.0% accuracy",
+      "Pipeline throughput: 121.2 FPS",
+      "Average total latency: 8.25ms per frame"
+    ]
+  }
+}

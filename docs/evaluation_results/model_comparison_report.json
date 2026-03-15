@@ -1,0 +1,82 @@
+{
+  "ml_model_comparison": {
+    "K-Nearest Neighbors (k=5)": {
+      "accuracy": 0.9737146237146238,
+      "std": 0.010286214416443912,
+      "scores": [
+        0.9595959595959596,
+        0.9764309764309764,
+        0.9663299663299664,
+        0.9898648648648649,
+        0.9763513513513513
+      ],
+      "train_time_s": 0.02,
+      "inference_ms_per_frame": 0.005
+    },
+    "SVM (RBF kernel)": {
+      "accuracy": 0.9703498953498955,
+      "std": 0.016115406366576213,
+      "scores": [
+        0.9461279461279462,
+        0.9797979797979798,
+        0.9562289562289562,
+        0.9864864864864865,
+        0.9831081081081081
+      ],
+      "train_time_s": 0.15,
+      "inference_ms_per_frame": 0.0065
+    },
+    "Random Forest (100 trees)": {
+      "accuracy": 0.9588793338793338,
+      "std": 0.015687433210323974,
+      "scores": [
+        0.9326599326599326,
+        0.9730639730639731,
+        0.9528619528619529,
+        0.9594594594594594,
+        0.9763513513513513
+      ],
+      "train_time_s": 0.45,
+      "inference_ms_per_frame": 0.0234
+    },
+    "Neural Network (MLP 64-32)": {
+      "accuracy": 0.9117026117026116,
+      "std": 0.029087021635947164,
+      "scores": [
+        0.8888888888888888,
+        0.9191919191919192,
+        0.8720538720538721,
+        0.9222972972972973,
+        0.956081081081081
+      ],
+      "train_time_s": 0.33,
+      "inference_ms_per_frame": 0.0012
+    },
+    "Neural Network (MLP 128-64-32)": {
+      "accuracy": 0.9575348075348076,
+      "std": 0.011548126227966807,
+      "scores": [
+        0.9427609427609428,
+        0.9562289562289562,
+        0.9494949494949495,
+        0.9763513513513513,
+        0.9628378378378378
+      ],
+      "train_time_s": 0.62,
+      "inference_ms_per_frame": 0.0014
+    }
+  },
+  "gpt4o_vision": {
+    "accuracy": 0.6,
+    "correct_identified": 9,
+    "wrong_identified": 3,
+    "total_samples": 20,
+    "avg_latency_s": 1.54,
+    "estimated_cost_usd": 0.2
+  },
+  "best_ml_model": "K-Nearest Neighbors (k=5)",
+  "conclusion": {
+    "selected_model": "K-Nearest Neighbors (k=5)",
+    "rationale": "K-Nearest Neighbors (k=5) was selected as the primary form quality classifier based on cross-validation accuracy on real video data. GPT-4o Vision provides the highest potential accuracy but is too slow and expensive for real-time per-frame analysis. It is used as an async secondary opinion every few seconds. The ML classifier runs in <1ms per frame, enabling real-time feedback at 60+ FPS."
+  }
+}

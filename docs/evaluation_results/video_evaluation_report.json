@@ -1,0 +1,1878 @@
+{
+  "pushup_video_evaluation": {
+    "correct_videos": 20,
+    "wrong_videos": 20,
+    "correct_avg_score": 98.8,
+    "wrong_avg_score": 84.4,
+    "score_separation": 14.3,
+    "correct_details": [
+      {
+        "video": "Copy of push up 1.mp4",
+        "total_frames": 61,
+        "processed_frames": 30,
+        "valid_pose_frames": 30,
+        "in_position_frames": 30,
+        "good_form_frames": 26,
+        "pose_detection_rate": 1.0,
+        "form_score": 86.7,
+        "rep_count": 1,
+        "errors": {
+          "hip_pike": 4
+        },
+        "avg_latency_ms": 62.27,
+        "max_latency_ms": 74.18,
+        "ground_truth": "correct"
+      },
+      {
+        "video": "Copy of push up 100.mp4",
+        "total_frames": 124,
+        "processed_frames": 62,
+        "valid_pose_frames": 62,
+        "in_position_frames": 62,
+        "good_form_frames": 62,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 0,
+        "errors": {},
+        "avg_latency_ms": 61.66,
+        "max_latency_ms": 69.97,
+        "ground_truth": "correct"
+      },
+      {
+        "video": "Copy of push up 101.mp4",
+        "total_frames": 77,
+        "processed_frames": 38,
+        "valid_pose_frames": 38,
+        "in_position_frames": 38,
+        "good_form_frames": 38,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 0,
+        "errors": {},
+        "avg_latency_ms": 62.02,
+        "max_latency_ms": 71.82,
+        "ground_truth": "correct"
+      },
+      {
+        "video": "Copy of push up 102.mp4",
+        "total_frames": 83,
+        "processed_frames": 41,
+        "valid_pose_frames": 41,
+        "in_position_frames": 41,
+        "good_form_frames": 41,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 0,
+        "errors": {},
+        "avg_latency_ms": 61.66,
+        "max_latency_ms": 71.76,
+        "ground_truth": "correct"
+      },
+      {
+        "video": "Copy of push up 113.mp4",
+        "total_frames": 77,
+        "processed_frames": 38,
+        "valid_pose_frames": 38,
+        "in_position_frames": 38,
+        "good_form_frames": 38,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 0,
+        "errors": {},
+        "avg_latency_ms": 61.96,
+        "max_latency_ms": 69.59,
+        "ground_truth": "correct"
+      },
+      {
+        "video": "Copy of push up 114.mp4",
+        "total_frames": 88,
+        "processed_frames": 44,
+        "valid_pose_frames": 44,
+        "in_position_frames": 44,
+        "good_form_frames": 44,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 0,
+        "errors": {},
+        "avg_latency_ms": 61.42,
+        "max_latency_ms": 64.24,
+        "ground_truth": "correct"
+      },
+      {
+        "video": "Copy of push up 115.mp4",
+        "total_frames": 137,
+        "processed_frames": 68,
+        "valid_pose_frames": 68,
+        "in_position_frames": 68,
+        "good_form_frames": 68,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 0,
+        "errors": {},
+        "avg_latency_ms": 62.09,
+        "max_latency_ms": 72.4,
+        "ground_truth": "correct"
+      },
+      {
+        "video": "Copy of push up 116.mp4",
+        "total_frames": 75,
+        "processed_frames": 37,
+        "valid_pose_frames": 37,
+        "in_position_frames": 37,
+        "good_form_frames": 37,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 0,
+        "errors": {},
+        "avg_latency_ms": 62.06,
+        "max_latency_ms": 72.6,
+        "ground_truth": "correct"
+      },
+      {
+        "video": "Copy of push up 127.mp4",
+        "total_frames": 91,
+        "processed_frames": 45,
+        "valid_pose_frames": 45,
+        "in_position_frames": 45,
+        "good_form_frames": 45,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 1,
+        "errors": {
+          "almost_full_depth": 2
+        },
+        "avg_latency_ms": 61.66,
+        "max_latency_ms": 70.67,
+        "ground_truth": "correct"
+      },
+      {
+        "video": "Copy of push up 129.mp4",
+        "total_frames": 84,
+        "processed_frames": 42,
+        "valid_pose_frames": 42,
+        "in_position_frames": 42,
+        "good_form_frames": 42,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 1,
+        "errors": {
+          "almost_full_depth": 2
+        },
+        "avg_latency_ms": 63.1,
+        "max_latency_ms": 106.09,
+        "ground_truth": "correct"
+      },
+      {
+        "video": "Copy of push up 131.mp4",
+        "total_frames": 77,
+        "processed_frames": 38,
+        "valid_pose_frames": 38,
+        "in_position_frames": 38,
+        "good_form_frames": 38,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 1,
+        "errors": {
+          "almost_full_depth": 4
+        },
+        "avg_latency_ms": 61.38,
+        "max_latency_ms": 62.81,
+        "ground_truth": "correct"
+      },
+      {
+        "video": "Copy of push up 132.mp4",
+        "total_frames": 79,
+        "processed_frames": 39,
+        "valid_pose_frames": 39,
+        "in_position_frames": 39,
+        "good_form_frames": 39,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 1,
+        "errors": {
+          "almost_full_depth": 5
+        },
+        "avg_latency_ms": 62.04,
+        "max_latency_ms": 70.13,
+        "ground_truth": "correct"
+      },
+      {
+        "video": "Copy of push up 133.mp4",
+        "total_frames": 76,
+        "processed_frames": 38,
+        "valid_pose_frames": 38,
+        "in_position_frames": 38,
+        "good_form_frames": 38,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 1,
+        "errors": {
+          "almost_full_depth": 4
+        },
+        "avg_latency_ms": 63.51,
+        "max_latency_ms": 88.88,
+        "ground_truth": "correct"
+      },
+      {
+        "video": "Copy of push up 134.mp4",
+        "total_frames": 75,
+        "processed_frames": 37,
+        "valid_pose_frames": 37,
+        "in_position_frames": 37,
+        "good_form_frames": 37,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 1,
+        "errors": {
+          "almost_full_depth": 3
+        },
+        "avg_latency_ms": 62.23,
+        "max_latency_ms": 73.16,
+        "ground_truth": "correct"
+      },
+      {
+        "video": "Copy of push up 135.mp4",
+        "total_frames": 72,
+        "processed_frames": 36,
+        "valid_pose_frames": 36,
+        "in_position_frames": 36,
+        "good_form_frames": 36,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 1,
+        "errors": {
+          "almost_full_depth": 4
+        },
+        "avg_latency_ms": 61.9,
+        "max_latency_ms": 72.2,
+        "ground_truth": "correct"
+      },
+      {
+        "video": "Copy of push up 136.mp4",
+        "total_frames": 75,
+        "processed_frames": 37,
+        "valid_pose_frames": 37,
+        "in_position_frames": 37,
+        "good_form_frames": 37,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 1,
+        "errors": {
+          "almost_full_depth": 3
+        },
+        "avg_latency_ms": 61.87,
+        "max_latency_ms": 63.42,
+        "ground_truth": "correct"
+      },
+      {
+        "video": "Copy of push up 137.mp4",
+        "total_frames": 71,
+        "processed_frames": 35,
+        "valid_pose_frames": 35,
+        "in_position_frames": 35,
+        "good_form_frames": 32,
+        "pose_detection_rate": 1.0,
+        "form_score": 91.4,
+        "rep_count": 1,
+        "errors": {
+          "almost_full_depth": 4,
+          "elbow_flare": 3
+        },
+        "avg_latency_ms": 62.22,
+        "max_latency_ms": 71.47,
+        "ground_truth": "correct"
+      },
+      {
+        "video": "Copy of push up 138.mp4",
+        "total_frames": 74,
+        "processed_frames": 37,
+        "valid_pose_frames": 37,
+        "in_position_frames": 37,
+        "good_form_frames": 36,
+        "pose_detection_rate": 1.0,
+        "form_score": 97.3,
+        "rep_count": 1,
+        "errors": {
+          "almost_full_depth": 4,
+          "elbow_flare": 1
+        },
+        "avg_latency_ms": 62.24,
+        "max_latency_ms": 70.08,
+        "ground_truth": "correct"
+      },
+      {
+        "video": "Copy of push up 140.mp4",
+        "total_frames": 87,
+        "processed_frames": 43,
+        "valid_pose_frames": 43,
+        "in_position_frames": 43,
+        "good_form_frames": 43,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 1,
+        "errors": {
+          "almost_full_depth": 5
+        },
+        "avg_latency_ms": 61.75,
+        "max_latency_ms": 70.1,
+        "ground_truth": "correct"
+      },
+      {
+        "video": "Copy of push up 141.mp4",
+        "total_frames": 91,
+        "processed_frames": 45,
+        "valid_pose_frames": 45,
+        "in_position_frames": 45,
+        "good_form_frames": 45,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 1,
+        "errors": {
+          "almost_full_depth": 5
+        },
+        "avg_latency_ms": 62.04,
+        "max_latency_ms": 70.78,
+        "ground_truth": "correct"
+      }
+    ],
+    "wrong_details": [
+      {
+        "video": "1.mp4",
+        "total_frames": 150,
+        "processed_frames": 75,
+        "valid_pose_frames": 75,
+        "in_position_frames": 75,
+        "good_form_frames": 74,
+        "pose_detection_rate": 1.0,
+        "form_score": 98.7,
+        "rep_count": 0,
+        "errors": {
+          "almost_full_depth": 10,
+          "hip_sag": 1
+        },
+        "avg_latency_ms": 61.85,
+        "max_latency_ms": 68.48,
+        "ground_truth": "wrong"
+      },
+      {
+        "video": "10.mp4",
+        "total_frames": 126,
+        "processed_frames": 63,
+        "valid_pose_frames": 63,
+        "in_position_frames": 44,
+        "good_form_frames": 44,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 1,
+        "errors": {},
+        "avg_latency_ms": 62.06,
+        "max_latency_ms": 71.8,
+        "ground_truth": "wrong"
+      },
+      {
+        "video": "11.mp4",
+        "total_frames": 83,
+        "processed_frames": 41,
+        "valid_pose_frames": 41,
+        "in_position_frames": 27,
+        "good_form_frames": 19,
+        "pose_detection_rate": 1.0,
+        "form_score": 70.4,
+        "rep_count": 0,
+        "errors": {
+          "hip_sag": 8
+        },
+        "avg_latency_ms": 61.88,
+        "max_latency_ms": 71.76,
+        "ground_truth": "wrong"
+      },
+      {
+        "video": "12.mp4",
+        "total_frames": 121,
+        "processed_frames": 60,
+        "valid_pose_frames": 60,
+        "in_position_frames": 50,
+        "good_form_frames": 50,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 0,
+        "errors": {},
+        "avg_latency_ms": 62.05,
+        "max_latency_ms": 67.92,
+        "ground_truth": "wrong"
+      },
+      {
+        "video": "13.mp4",
+        "total_frames": 121,
+        "processed_frames": 60,
+        "valid_pose_frames": 60,
+        "in_position_frames": 41,
+        "good_form_frames": 38,
+        "pose_detection_rate": 1.0,
+        "form_score": 92.7,
+        "rep_count": 0,
+        "errors": {
+          "almost_full_depth": 5,
+          "hip_sag": 3
+        },
+        "avg_latency_ms": 61.85,
+        "max_latency_ms": 71.8,
+        "ground_truth": "wrong"
+      },
+      {
+        "video": "14.mp4",
+        "total_frames": 125,
+        "processed_frames": 62,
+        "valid_pose_frames": 62,
+        "in_position_frames": 62,
+        "good_form_frames": 52,
+        "pose_detection_rate": 1.0,
+        "form_score": 83.9,
+        "rep_count": 0,
+        "errors": {
+          "almost_full_depth": 9,
+          "hip_sag": 10
+        },
+        "avg_latency_ms": 61.82,
+        "max_latency_ms": 72.14,
+        "ground_truth": "wrong"
+      },
+      {
+        "video": "15.mp4",
+        "total_frames": 100,
+        "processed_frames": 50,
+        "valid_pose_frames": 50,
+        "in_position_frames": 50,
+        "good_form_frames": 41,
+        "pose_detection_rate": 1.0,
+        "form_score": 82.0,
+        "rep_count": 0,
+        "errors": {
+          "almost_full_depth": 7,
+          "hip_sag": 9
+        },
+        "avg_latency_ms": 62.09,
+        "max_latency_ms": 70.58,
+        "ground_truth": "wrong"
+      },
+      {
+        "video": "16.mp4",
+        "total_frames": 100,
+        "processed_frames": 50,
+        "valid_pose_frames": 50,
+        "in_position_frames": 48,
+        "good_form_frames": 46,
+        "pose_detection_rate": 1.0,
+        "form_score": 95.8,
+        "rep_count": 0,
+        "errors": {
+          "almost_full_depth": 9,
+          "hip_sag": 2
+        },
+        "avg_latency_ms": 62.08,
+        "max_latency_ms": 74.83,
+        "ground_truth": "wrong"
+      },
+      {
+        "video": "17.mp4",
+        "total_frames": 107,
+        "processed_frames": 53,
+        "valid_pose_frames": 53,
+        "in_position_frames": 45,
+        "good_form_frames": 24,
+        "pose_detection_rate": 1.0,
+        "form_score": 53.3,
+        "rep_count": 0,
+        "errors": {
+          "hip_sag": 20,
+          "almost_full_depth": 6,
+          "hip_pike": 1
+        },
+        "avg_latency_ms": 61.71,
+        "max_latency_ms": 68.9,
+        "ground_truth": "wrong"
+      },
+      {
+        "video": "18.mp4",
+        "total_frames": 150,
+        "processed_frames": 75,
+        "valid_pose_frames": 74,
+        "in_position_frames": 58,
+        "good_form_frames": 38,
+        "pose_detection_rate": 0.987,
+        "form_score": 65.5,
+        "rep_count": 0,
+        "errors": {
+          "hip_sag": 18,
+          "almost_full_depth": 6,
+          "hip_pike": 2
+        },
+        "avg_latency_ms": 61.78,
+        "max_latency_ms": 70.09,
+        "ground_truth": "wrong"
+      },
+      {
+        "video": "19.mp4",
+        "total_frames": 126,
+        "processed_frames": 63,
+        "valid_pose_frames": 63,
+        "in_position_frames": 63,
+        "good_form_frames": 55,
+        "pose_detection_rate": 1.0,
+        "form_score": 87.3,
+        "rep_count": 0,
+        "errors": {
+          "almost_full_depth": 8,
+          "hip_sag": 8
+        },
+        "avg_latency_ms": 61.88,
+        "max_latency_ms": 71.03,
+        "ground_truth": "wrong"
+      },
+      {
+        "video": "2.mp4",
+        "total_frames": 150,
+        "processed_frames": 75,
+        "valid_pose_frames": 75,
+        "in_position_frames": 74,
+        "good_form_frames": 66,
+        "pose_detection_rate": 1.0,
+        "form_score": 89.2,
+        "rep_count": 0,
+        "errors": {
+          "almost_full_depth": 6,
+          "hip_sag": 8
+        },
+        "avg_latency_ms": 61.81,
+        "max_latency_ms": 71.41,
+        "ground_truth": "wrong"
+      },
+      {
+        "video": "20.mp4",
+        "total_frames": 93,
+        "processed_frames": 46,
+        "valid_pose_frames": 46,
+        "in_position_frames": 45,
+        "good_form_frames": 32,
+        "pose_detection_rate": 1.0,
+        "form_score": 71.1,
+        "rep_count": 0,
+        "errors": {
+          "almost_full_depth": 11,
+          "hip_sag": 13
+        },
+        "avg_latency_ms": 61.91,
+        "max_latency_ms": 70.48,
+        "ground_truth": "wrong"
+      },
+      {
+        "video": "21.mp4",
+        "total_frames": 105,
+        "processed_frames": 52,
+        "valid_pose_frames": 52,
+        "in_position_frames": 50,
+        "good_form_frames": 47,
+        "pose_detection_rate": 1.0,
+        "form_score": 94.0,
+        "rep_count": 0,
+        "errors": {
+          "almost_full_depth": 7,
+          "hip_sag": 3
+        },
+        "avg_latency_ms": 61.95,
+        "max_latency_ms": 69.56,
+        "ground_truth": "wrong"
+      },
+      {
+        "video": "22.mp4",
+        "total_frames": 150,
+        "processed_frames": 75,
+        "valid_pose_frames": 75,
+        "in_position_frames": 70,
+        "good_form_frames": 37,
+        "pose_detection_rate": 1.0,
+        "form_score": 52.9,
+        "rep_count": 0,
+        "errors": {
+          "hip_sag": 33,
+          "almost_full_depth": 7
+        },
+        "avg_latency_ms": 61.97,
+        "max_latency_ms": 70.12,
+        "ground_truth": "wrong"
+      },
+      {
+        "video": "23.mp4",
+        "total_frames": 128,
+        "processed_frames": 64,
+        "valid_pose_frames": 64,
+        "in_position_frames": 56,
+        "good_form_frames": 32,
+        "pose_detection_rate": 1.0,
+        "form_score": 57.1,
+        "rep_count": 0,
+        "errors": {
+          "hip_sag": 11,
+          "almost_full_depth": 6,
+          "hip_pike": 13
+        },
+        "avg_latency_ms": 61.99,
+        "max_latency_ms": 72.35,
+        "ground_truth": "wrong"
+      },
+      {
+        "video": "3.mp4",
+        "total_frames": 104,
+        "processed_frames": 52,
+        "valid_pose_frames": 52,
+        "in_position_frames": 52,
+        "good_form_frames": 51,
+        "pose_detection_rate": 1.0,
+        "form_score": 98.1,
+        "rep_count": 0,
+        "errors": {
+          "almost_full_depth": 5,
+          "hip_sag": 1
+        },
+        "avg_latency_ms": 62.43,
+        "max_latency_ms": 70.14,
+        "ground_truth": "wrong"
+      },
+      {
+        "video": "4.mp4",
+        "total_frames": 72,
+        "processed_frames": 36,
+        "valid_pose_frames": 36,
+        "in_position_frames": 36,
+        "good_form_frames": 36,
+        "pose_detection_rate": 1.0,
+        "form_score": 100.0,
+        "rep_count": 0,
+        "errors": {
+          "almost_full_depth": 3
+        },
+        "avg_latency_ms": 63.27,
+        "max_latency_ms": 101.38,
+        "ground_truth": "wrong"
+      },
+      {
+        "video": "5.mp4",
+        "total_frames": 119,
+        "processed_frames": 59,
+        "valid_pose_frames": 59,
+        "in_position_frames": 59,
+        "good_form_frames": 58,
+        "pose_detection_rate": 1.0,
+        "form_score": 98.3,
+        "rep_count": 0,
+        "errors": {
+          "almost_full_depth": 13,
+          "hip_pike": 1
+        },
+        "avg_latency_ms": 62.14,
+        "max_latency_ms": 73.22,
+        "ground_truth": "wrong"
+      },
+      {
+        "video": "6.mp4",
+        "total_frames": 119,
+        "processed_frames": 59,
+        "valid_pose_frames": 59,
+        "in_position_frames": 59,
+        "good_form_frames": 58,
+        "pose_detection_rate": 1.0,
+        "form_score": 98.3,
+        "rep_count": 0,
+        "errors": {
+          "almost_full_depth": 7,
+          "hip_sag": 1
+        },
+        "avg_latency_ms": 67.53,
+        "max_latency_ms": 239.03,
+        "ground_truth": "wrong"
+      }
+    ]
+  },
+  "workout_video_evaluation": {
+    "deadlift": {
+      "videos_analyzed": 10,
+      "avg_form_score": 92.6,
+      "details": [
+        {
+          "video": "romanian deadlift_6.mp4",
+          "total_frames": 88,
+          "processed_frames": 44,
+          "valid_pose_frames": 44,
+          "in_position_frames": 24,
+          "good_form_frames": 20,
+          "pose_detection_rate": 1.0,
+          "form_score": 83.3,
+          "rep_count": 1,
+          "errors": {
+            "rounded_back": 4
+          },
+          "avg_latency_ms": 60.78,
+          "max_latency_ms": 61.56
+        },
+        {
+          "video": "romanian deadlift_7.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 49,
+          "in_position_frames": 3,
+          "good_form_frames": 3,
+          "pose_detection_rate": 0.653,
+          "form_score": 100.0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 42.66,
+          "max_latency_ms": 61.02
+        },
+        {
+          "video": "romanian deadlift_5.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 39,
+          "good_form_frames": 39,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 1,
+          "errors": {},
+          "avg_latency_ms": 60.76,
+          "max_latency_ms": 62.95
+        },
+        {
+          "video": "romanian deadlift_9.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 74,
+          "in_position_frames": 33,
+          "good_form_frames": 33,
+          "pose_detection_rate": 0.987,
+          "form_score": 100.0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 60.22,
+          "max_latency_ms": 61.67
+        },
+        {
+          "video": "romanian deadlift_11.mp4",
+          "total_frames": 102,
+          "processed_frames": 51,
+          "valid_pose_frames": 51,
+          "in_position_frames": 18,
+          "good_form_frames": 18,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 61.11,
+          "max_latency_ms": 63.85
+        },
+        {
+          "video": "romanian deadlift_8.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 0,
+          "good_form_frames": 0,
+          "pose_detection_rate": 1.0,
+          "form_score": 0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 60.78,
+          "max_latency_ms": 61.93
+        },
+        {
+          "video": "romanian deadlift_10.mp4",
+          "total_frames": 140,
+          "processed_frames": 70,
+          "valid_pose_frames": 70,
+          "in_position_frames": 61,
+          "good_form_frames": 50,
+          "pose_detection_rate": 1.0,
+          "form_score": 82.0,
+          "rep_count": 1,
+          "errors": {
+            "rounded_back": 11
+          },
+          "avg_latency_ms": 61.02,
+          "max_latency_ms": 62.23
+        },
+        {
+          "video": "romanian deadlift_12.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 50,
+          "in_position_frames": 0,
+          "good_form_frames": 0,
+          "pose_detection_rate": 0.667,
+          "form_score": 0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 45.99,
+          "max_latency_ms": 63.1
+        },
+        {
+          "video": "romanian deadlift_13.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 0,
+          "good_form_frames": 0,
+          "pose_detection_rate": 1.0,
+          "form_score": 0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 60.63,
+          "max_latency_ms": 61.33
+        },
+        {
+          "video": "romanian deadlift_14.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 52,
+          "good_form_frames": 43,
+          "pose_detection_rate": 1.0,
+          "form_score": 82.7,
+          "rep_count": 1,
+          "errors": {
+            "rounded_back": 9
+          },
+          "avg_latency_ms": 60.59,
+          "max_latency_ms": 61.26
+        }
+      ]
+    },
+    "bicep_curl": {
+      "videos_analyzed": 15,
+      "avg_form_score": 86.3,
+      "details": [
+        {
+          "video": "barbell biceps curl_46.mp4",
+          "total_frames": 94,
+          "processed_frames": 47,
+          "valid_pose_frames": 47,
+          "in_position_frames": 47,
+          "good_form_frames": 47,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 60.62,
+          "max_latency_ms": 62.43
+        },
+        {
+          "video": "barbell biceps curl_52.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 74,
+          "in_position_frames": 57,
+          "good_form_frames": 35,
+          "pose_detection_rate": 0.987,
+          "form_score": 61.4,
+          "rep_count": 2,
+          "errors": {
+            "elbow_drift": 22
+          },
+          "avg_latency_ms": 60.31,
+          "max_latency_ms": 63.94
+        },
+        {
+          "video": "barbell biceps curl_53.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 63,
+          "in_position_frames": 43,
+          "good_form_frames": 35,
+          "pose_detection_rate": 0.84,
+          "form_score": 81.4,
+          "rep_count": 4,
+          "errors": {
+            "elbow_drift": 8,
+            "swinging": 1
+          },
+          "avg_latency_ms": 54.44,
+          "max_latency_ms": 61.29
+        },
+        {
+          "video": "barbell biceps curl_47.mp4",
+          "total_frames": 120,
+          "processed_frames": 60,
+          "valid_pose_frames": 60,
+          "in_position_frames": 60,
+          "good_form_frames": 60,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 3,
+          "errors": {},
+          "avg_latency_ms": 60.85,
+          "max_latency_ms": 62.45
+        },
+        {
+          "video": "barbell biceps curl_51.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 51,
+          "good_form_frames": 36,
+          "pose_detection_rate": 1.0,
+          "form_score": 70.6,
+          "rep_count": 2,
+          "errors": {
+            "elbow_drift": 15
+          },
+          "avg_latency_ms": 60.84,
+          "max_latency_ms": 62.48
+        },
+        {
+          "video": "barbell biceps curl_45.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 75,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 1,
+          "errors": {},
+          "avg_latency_ms": 61.13,
+          "max_latency_ms": 65.92
+        },
+        {
+          "video": "barbell biceps curl_44.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 75,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 4,
+          "errors": {},
+          "avg_latency_ms": 60.7,
+          "max_latency_ms": 63.17
+        },
+        {
+          "video": "barbell biceps curl_50.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 75,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 60.86,
+          "max_latency_ms": 63.73
+        },
+        {
+          "video": "barbell biceps curl_54.mp4",
+          "total_frames": 132,
+          "processed_frames": 66,
+          "valid_pose_frames": 35,
+          "in_position_frames": 16,
+          "good_form_frames": 15,
+          "pose_detection_rate": 0.53,
+          "form_score": 93.8,
+          "rep_count": 1,
+          "errors": {
+            "elbow_drift": 1
+          },
+          "avg_latency_ms": 38.62,
+          "max_latency_ms": 60.89
+        },
+        {
+          "video": "barbell biceps curl_40.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 75,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 3,
+          "errors": {},
+          "avg_latency_ms": 60.64,
+          "max_latency_ms": 61.71
+        },
+        {
+          "video": "barbell biceps curl_41.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 0,
+          "in_position_frames": 0,
+          "good_form_frames": 0,
+          "pose_detection_rate": 0.0,
+          "form_score": 0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 8.95,
+          "max_latency_ms": 9.16
+        },
+        {
+          "video": "barbell biceps curl_55.mp4",
+          "total_frames": 147,
+          "processed_frames": 73,
+          "valid_pose_frames": 73,
+          "in_position_frames": 73,
+          "good_form_frames": 73,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 61.12,
+          "max_latency_ms": 61.89
+        },
+        {
+          "video": "barbell biceps curl_43.mp4",
+          "total_frames": 132,
+          "processed_frames": 66,
+          "valid_pose_frames": 66,
+          "in_position_frames": 59,
+          "good_form_frames": 54,
+          "pose_detection_rate": 1.0,
+          "form_score": 91.5,
+          "rep_count": 0,
+          "errors": {
+            "elbow_drift": 2,
+            "swinging": 3
+          },
+          "avg_latency_ms": 60.71,
+          "max_latency_ms": 61.69
+        },
+        {
+          "video": "barbell biceps curl_57.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 17,
+          "in_position_frames": 17,
+          "good_form_frames": 6,
+          "pose_detection_rate": 0.227,
+          "form_score": 35.3,
+          "rep_count": 1,
+          "errors": {
+            "elbow_drift": 11
+          },
+          "avg_latency_ms": 20.61,
+          "max_latency_ms": 60.92
+        },
+        {
+          "video": "barbell biceps curl_56.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 45,
+          "in_position_frames": 23,
+          "good_form_frames": 17,
+          "pose_detection_rate": 0.6,
+          "form_score": 73.9,
+          "rep_count": 0,
+          "errors": {
+            "elbow_drift": 6
+          },
+          "avg_latency_ms": 41.34,
+          "max_latency_ms": 61.85
+        }
+      ]
+    },
+    "squat": {
+      "videos_analyzed": 15,
+      "avg_form_score": 69.0,
+      "details": [
+        {
+          "video": "squat_9.mp4",
+          "total_frames": 72,
+          "processed_frames": 36,
+          "valid_pose_frames": 30,
+          "in_position_frames": 1,
+          "good_form_frames": 1,
+          "pose_detection_rate": 0.833,
+          "form_score": 100.0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 52.16,
+          "max_latency_ms": 61.18
+        },
+        {
+          "video": "squat_8.mp4",
+          "total_frames": 101,
+          "processed_frames": 50,
+          "valid_pose_frames": 49,
+          "in_position_frames": 38,
+          "good_form_frames": 30,
+          "pose_detection_rate": 0.98,
+          "form_score": 78.9,
+          "rep_count": 1,
+          "errors": {
+            "asymmetric_depth": 3,
+            "almost_parallel": 6,
+            "insufficient_depth": 5
+          },
+          "avg_latency_ms": 59.68,
+          "max_latency_ms": 61.87
+        },
+        {
+          "video": "squat_21.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 66,
+          "in_position_frames": 21,
+          "good_form_frames": 12,
+          "pose_detection_rate": 0.88,
+          "form_score": 57.1,
+          "rep_count": 0,
+          "errors": {
+            "insufficient_depth": 1,
+            "almost_parallel": 4,
+            "knee_cave": 8
+          },
+          "avg_latency_ms": 55.44,
+          "max_latency_ms": 61.76
+        },
+        {
+          "video": "squat_20.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 69,
+          "good_form_frames": 53,
+          "pose_detection_rate": 1.0,
+          "form_score": 76.8,
+          "rep_count": 0,
+          "errors": {
+            "insufficient_depth": 2,
+            "knee_cave": 14,
+            "almost_parallel": 1
+          },
+          "avg_latency_ms": 60.93,
+          "max_latency_ms": 62.02
+        },
+        {
+          "video": "squat_22.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 45,
+          "in_position_frames": 24,
+          "good_form_frames": 23,
+          "pose_detection_rate": 0.6,
+          "form_score": 95.8,
+          "rep_count": 0,
+          "errors": {
+            "asymmetric_depth": 1,
+            "almost_parallel": 1
+          },
+          "avg_latency_ms": 41.09,
+          "max_latency_ms": 65.54
+        },
+        {
+          "video": "squat_23.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 63,
+          "in_position_frames": 28,
+          "good_form_frames": 25,
+          "pose_detection_rate": 0.84,
+          "form_score": 89.3,
+          "rep_count": 0,
+          "errors": {
+            "insufficient_depth": 3,
+            "almost_parallel": 4
+          },
+          "avg_latency_ms": 53.08,
+          "max_latency_ms": 62.94
+        },
+        {
+          "video": "squat_27.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 3,
+          "good_form_frames": 0,
+          "pose_detection_rate": 1.0,
+          "form_score": 0.0,
+          "rep_count": 0,
+          "errors": {
+            "knee_cave": 3,
+            "asymmetric_depth": 1
+          },
+          "avg_latency_ms": 61.63,
+          "max_latency_ms": 62.22
+        },
+        {
+          "video": "squat_26.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 0,
+          "good_form_frames": 0,
+          "pose_detection_rate": 1.0,
+          "form_score": 0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 60.78,
+          "max_latency_ms": 62.23
+        },
+        {
+          "video": "squat_24.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 58,
+          "in_position_frames": 18,
+          "good_form_frames": 0,
+          "pose_detection_rate": 0.773,
+          "form_score": 0.0,
+          "rep_count": 0,
+          "errors": {
+            "almost_parallel": 4,
+            "knee_cave": 18
+          },
+          "avg_latency_ms": 49.15,
+          "max_latency_ms": 62.91
+        },
+        {
+          "video": "squat_18.mp4",
+          "total_frames": 93,
+          "processed_frames": 46,
+          "valid_pose_frames": 46,
+          "in_position_frames": 46,
+          "good_form_frames": 45,
+          "pose_detection_rate": 1.0,
+          "form_score": 97.8,
+          "rep_count": 1,
+          "errors": {
+            "almost_parallel": 5,
+            "asymmetric_depth": 1
+          },
+          "avg_latency_ms": 61.06,
+          "max_latency_ms": 61.92
+        },
+        {
+          "video": "squat_19.mp4",
+          "total_frames": 143,
+          "processed_frames": 71,
+          "valid_pose_frames": 71,
+          "in_position_frames": 71,
+          "good_form_frames": 67,
+          "pose_detection_rate": 1.0,
+          "form_score": 94.4,
+          "rep_count": 2,
+          "errors": {
+            "insufficient_depth": 4,
+            "almost_parallel": 5
+          },
+          "avg_latency_ms": 61.07,
+          "max_latency_ms": 63.92
+        },
+        {
+          "video": "squat_25.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 0,
+          "good_form_frames": 0,
+          "pose_detection_rate": 1.0,
+          "form_score": 0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 61.29,
+          "max_latency_ms": 62.1
+        },
+        {
+          "video": "squat_28.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 69,
+          "in_position_frames": 0,
+          "good_form_frames": 0,
+          "pose_detection_rate": 0.92,
+          "form_score": 0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 57.24,
+          "max_latency_ms": 62.2
+        },
+        {
+          "video": "squat_14.mp4",
+          "total_frames": 101,
+          "processed_frames": 50,
+          "valid_pose_frames": 50,
+          "in_position_frames": 0,
+          "good_form_frames": 0,
+          "pose_detection_rate": 1.0,
+          "form_score": 0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 60.91,
+          "max_latency_ms": 61.87
+        },
+        {
+          "video": "squat_15.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 67,
+          "in_position_frames": 0,
+          "good_form_frames": 0,
+          "pose_detection_rate": 0.893,
+          "form_score": 0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 55.49,
+          "max_latency_ms": 63.05
+        }
+      ]
+    },
+    "pushup": {
+      "videos_analyzed": 15,
+      "avg_form_score": 90.2,
+      "details": [
+        {
+          "video": "push-up_38.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 75,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 2,
+          "errors": {
+            "almost_full_depth": 18
+          },
+          "avg_latency_ms": 63.58,
+          "max_latency_ms": 65.94
+        },
+        {
+          "video": "push-up_10.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 73,
+          "in_position_frames": 73,
+          "good_form_frames": 49,
+          "pose_detection_rate": 0.973,
+          "form_score": 67.1,
+          "rep_count": 2,
+          "errors": {
+            "hip_pike": 20,
+            "almost_full_depth": 9,
+            "hip_sag": 4
+          },
+          "avg_latency_ms": 63.36,
+          "max_latency_ms": 64.62
+        },
+        {
+          "video": "push-up_1.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 74,
+          "good_form_frames": 68,
+          "pose_detection_rate": 1.0,
+          "form_score": 91.9,
+          "rep_count": 0,
+          "errors": {
+            "hip_pike": 6,
+            "almost_full_depth": 1
+          },
+          "avg_latency_ms": 64.16,
+          "max_latency_ms": 93.03
+        },
+        {
+          "video": "push-up_11.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 52,
+          "pose_detection_rate": 1.0,
+          "form_score": 69.3,
+          "rep_count": 1,
+          "errors": {
+            "hip_pike": 22,
+            "almost_full_depth": 5,
+            "hip_sag": 1
+          },
+          "avg_latency_ms": 63.8,
+          "max_latency_ms": 66.86
+        },
+        {
+          "video": "push-up_39.mp4",
+          "total_frames": 145,
+          "processed_frames": 72,
+          "valid_pose_frames": 66,
+          "in_position_frames": 46,
+          "good_form_frames": 46,
+          "pose_detection_rate": 0.917,
+          "form_score": 100.0,
+          "rep_count": 2,
+          "errors": {
+            "almost_full_depth": 7
+          },
+          "avg_latency_ms": 59.9,
+          "max_latency_ms": 86.75
+        },
+        {
+          "video": "push-up_13.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 68,
+          "in_position_frames": 64,
+          "good_form_frames": 58,
+          "pose_detection_rate": 0.907,
+          "form_score": 90.6,
+          "rep_count": 3,
+          "errors": {
+            "hip_pike": 3,
+            "hip_sag": 3,
+            "almost_full_depth": 3
+          },
+          "avg_latency_ms": 63.46,
+          "max_latency_ms": 67.48
+        },
+        {
+          "video": "push-up_3.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 75,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 63.35,
+          "max_latency_ms": 64.02
+        },
+        {
+          "video": "push-up_12.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 74,
+          "in_position_frames": 74,
+          "good_form_frames": 52,
+          "pose_detection_rate": 0.987,
+          "form_score": 70.3,
+          "rep_count": 2,
+          "errors": {
+            "hip_pike": 18,
+            "almost_full_depth": 8,
+            "hip_sag": 4
+          },
+          "avg_latency_ms": 63.77,
+          "max_latency_ms": 76.37
+        },
+        {
+          "video": "push-up_2.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 75,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 1,
+          "errors": {},
+          "avg_latency_ms": 63.89,
+          "max_latency_ms": 70.52
+        },
+        {
+          "video": "push-up_6.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 75,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 1,
+          "errors": {
+            "almost_full_depth": 21
+          },
+          "avg_latency_ms": 63.71,
+          "max_latency_ms": 66.0
+        },
+        {
+          "video": "push-up_16.mp4",
+          "total_frames": 140,
+          "processed_frames": 70,
+          "valid_pose_frames": 70,
+          "in_position_frames": 70,
+          "good_form_frames": 70,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 1,
+          "errors": {},
+          "avg_latency_ms": 63.8,
+          "max_latency_ms": 67.95
+        },
+        {
+          "video": "push-up_7.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 64,
+          "pose_detection_rate": 1.0,
+          "form_score": 85.3,
+          "rep_count": 0,
+          "errors": {
+            "hip_pike": 11,
+            "almost_full_depth": 10
+          },
+          "avg_latency_ms": 63.44,
+          "max_latency_ms": 65.7
+        },
+        {
+          "video": "push-up_17.mp4",
+          "total_frames": 91,
+          "processed_frames": 45,
+          "valid_pose_frames": 9,
+          "in_position_frames": 9,
+          "good_form_frames": 7,
+          "pose_detection_rate": 0.2,
+          "form_score": 77.8,
+          "rep_count": 0,
+          "errors": {
+            "almost_full_depth": 2,
+            "hip_sag": 2
+          },
+          "avg_latency_ms": 21.69,
+          "max_latency_ms": 63.59
+        },
+        {
+          "video": "push-up_15.mp4",
+          "total_frames": 83,
+          "processed_frames": 41,
+          "valid_pose_frames": 41,
+          "in_position_frames": 41,
+          "good_form_frames": 41,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 0,
+          "errors": {
+            "almost_full_depth": 17
+          },
+          "avg_latency_ms": 63.46,
+          "max_latency_ms": 63.87
+        },
+        {
+          "video": "push-up_5.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 75,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 2,
+          "errors": {
+            "almost_full_depth": 28
+          },
+          "avg_latency_ms": 63.86,
+          "max_latency_ms": 65.72
+        }
+      ]
+    },
+    "shoulder_press": {
+      "videos_analyzed": 13,
+      "avg_form_score": 93.7,
+      "details": [
+        {
+          "video": "shoulder press_9.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 75,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 2,
+          "errors": {},
+          "avg_latency_ms": 61.44,
+          "max_latency_ms": 64.1
+        },
+        {
+          "video": "shoulder press_8.mp4",
+          "total_frames": 118,
+          "processed_frames": 59,
+          "valid_pose_frames": 53,
+          "in_position_frames": 53,
+          "good_form_frames": 52,
+          "pose_detection_rate": 0.898,
+          "form_score": 98.1,
+          "rep_count": 2,
+          "errors": {
+            "asymmetric_press": 1
+          },
+          "avg_latency_ms": 55.4,
+          "max_latency_ms": 60.91
+        },
+        {
+          "video": "shoulder press_15.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 70,
+          "pose_detection_rate": 1.0,
+          "form_score": 93.3,
+          "rep_count": 5,
+          "errors": {
+            "asymmetric_press": 5
+          },
+          "avg_latency_ms": 60.94,
+          "max_latency_ms": 62.81
+        },
+        {
+          "video": "shoulder press_14.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 74,
+          "in_position_frames": 69,
+          "good_form_frames": 62,
+          "pose_detection_rate": 0.987,
+          "form_score": 89.9,
+          "rep_count": 7,
+          "errors": {
+            "excessive_arch": 7,
+            "asymmetric_press": 1
+          },
+          "avg_latency_ms": 59.11,
+          "max_latency_ms": 61.46
+        },
+        {
+          "video": "shoulder press_16.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 34,
+          "pose_detection_rate": 1.0,
+          "form_score": 45.3,
+          "rep_count": 2,
+          "errors": {
+            "asymmetric_press": 41
+          },
+          "avg_latency_ms": 60.59,
+          "max_latency_ms": 61.26
+        },
+        {
+          "video": "shoulder press_17.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 74,
+          "pose_detection_rate": 1.0,
+          "form_score": 98.7,
+          "rep_count": 2,
+          "errors": {
+            "asymmetric_press": 1
+          },
+          "avg_latency_ms": 60.87,
+          "max_latency_ms": 62.63
+        },
+        {
+          "video": "shoulder press_13.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 67,
+          "good_form_frames": 65,
+          "pose_detection_rate": 1.0,
+          "form_score": 97.0,
+          "rep_count": 4,
+          "errors": {
+            "asymmetric_press": 2
+          },
+          "avg_latency_ms": 59.22,
+          "max_latency_ms": 61.65
+        },
+        {
+          "video": "shoulder press_6.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 70,
+          "in_position_frames": 48,
+          "good_form_frames": 48,
+          "pose_detection_rate": 0.933,
+          "form_score": 100.0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 60.65,
+          "max_latency_ms": 61.92
+        },
+        {
+          "video": "shoulder press_7.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 74,
+          "good_form_frames": 74,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 61.12,
+          "max_latency_ms": 64.17
+        },
+        {
+          "video": "shoulder press_12.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 74,
+          "good_form_frames": 74,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 2,
+          "errors": {},
+          "avg_latency_ms": 59.04,
+          "max_latency_ms": 60.1
+        },
+        {
+          "video": "shoulder press_10.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 75,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 1,
+          "errors": {},
+          "avg_latency_ms": 59.08,
+          "max_latency_ms": 60.4
+        },
+        {
+          "video": "shoulder press_5.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 72,
+          "pose_detection_rate": 1.0,
+          "form_score": 96.0,
+          "rep_count": 10,
+          "errors": {
+            "asymmetric_press": 3
+          },
+          "avg_latency_ms": 61.65,
+          "max_latency_ms": 64.99
+        },
+        {
+          "video": "shoulder press_11.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 68,
+          "good_form_frames": 68,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 2,
+          "errors": {},
+          "avg_latency_ms": 59.07,
+          "max_latency_ms": 59.34
+        }
+      ]
+    },
+    "plank": {
+      "videos_analyzed": 6,
+      "avg_form_score": 82.4,
+      "details": [
+        {
+          "video": "plank_3.mp4",
+          "total_frames": 77,
+          "processed_frames": 38,
+          "valid_pose_frames": 38,
+          "in_position_frames": 38,
+          "good_form_frames": 38,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 60.57,
+          "max_latency_ms": 60.91
+        },
+        {
+          "video": "plank_2.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 72,
+          "in_position_frames": 72,
+          "good_form_frames": 66,
+          "pose_detection_rate": 0.96,
+          "form_score": 91.7,
+          "rep_count": 0,
+          "errors": {
+            "hip_pike": 6
+          },
+          "avg_latency_ms": 58.63,
+          "max_latency_ms": 61.63
+        },
+        {
+          "video": "plank_6.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 2,
+          "pose_detection_rate": 1.0,
+          "form_score": 2.7,
+          "rep_count": 0,
+          "errors": {
+            "head_drop": 73,
+            "hip_pike": 1
+          },
+          "avg_latency_ms": 61.07,
+          "max_latency_ms": 62.94
+        },
+        {
+          "video": "plank_7.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 75,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 59.03,
+          "max_latency_ms": 60.54
+        },
+        {
+          "video": "plank_5.mp4",
+          "total_frames": 150,
+          "processed_frames": 75,
+          "valid_pose_frames": 75,
+          "in_position_frames": 75,
+          "good_form_frames": 75,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 61.0,
+          "max_latency_ms": 61.89
+        },
+        {
+          "video": "plank_4.mp4",
+          "total_frames": 117,
+          "processed_frames": 58,
+          "valid_pose_frames": 58,
+          "in_position_frames": 58,
+          "good_form_frames": 58,
+          "pose_detection_rate": 1.0,
+          "form_score": 100.0,
+          "rep_count": 0,
+          "errors": {},
+          "avg_latency_ms": 61.02,
+          "max_latency_ms": 62.78
+        }
+      ]
+    }
+  },
+  "summary": {}
+}

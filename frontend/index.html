@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Workout Coach</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <!-- Login Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-card">
+            <h2 class="auth-title">AI Workout Coach</h2>
+            <p class="auth-subtitle">Sign in to track your progress</p>
+            <div class="auth-form">
+                <input type="text" id="authUsername" placeholder="Username" class="auth-input" />
+                <input type="password" id="authPassword" placeholder="Password" class="auth-input" />
+                <button class="btn btn-primary auth-btn" id="loginBtn" style="width:100%">Sign In</button>
+                <button class="btn btn-ghost auth-btn" id="registerBtn" style="width:100%">Create Account</button>
+                <button class="btn btn-ghost auth-btn" id="skipAuthBtn" style="width:100%;font-size:0.75rem;color:var(--text-muted)">Continue as Guest</button>
+            </div>
+            <p class="auth-error" id="authError"></p>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">🏋️</span>
+                <h1>AI Workout Coach</h1>
+            </div>
+            <div class="header-right">
+                <span class="header-user" id="headerUser"></span>
+                <button class="btn btn-sm btn-ghost" id="logoutBtn" style="display:none">Logout</button>
+                <button class="btn btn-sm btn-ghost" id="ttsToggle">Mute Voice</button>
+                <div class="connection-status" id="connectionStatus">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Ready</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Video Section -->
+            <section class="video-section">
+                <div class="video-container">
+                    <video id="videoElement" autoplay playsinline muted></video>
+                    <canvas id="overlayCanvas"></canvas>
+
+                    <!-- Feedback Overlay -->
+                    <div class="feedback-overlay" id="feedbackOverlay">
+                        <div class="feedback-content">
+                            <span class="feedback-text" id="feedbackText">Get ready to start!</span>
+                        </div>
+                    </div>
+
+                    <!-- Rep Counter -->
+                    <div class="rep-counter" id="repCounter">
+                        <span class="rep-number">0</span>
+                        <span class="rep-label">REPS</span>
+                    </div>
+
+                    <!-- Phase Indicator -->
+                    <div class="phase-indicator" id="phaseIndicator">
+                        <span class="phase-text">Standing</span>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="video-controls">
+                    <button class="btn btn-primary" id="startBtn">
+                        <span class="btn-icon">▶</span>
+                        Start Workout
+                    </button>
+                    <button class="btn btn-secondary" id="stopBtn" disabled>
+                        <span class="btn-icon">⏹</span>
+                        Stop
+                    </button>
+                    <button class="btn btn-ghost" id="resetBtn">
+                        <span class="btn-icon">↺</span>
+                        Reset
+                    </button>
+                </div>
+            </section>
+
+            <!-- Stats Panel -->
+            <aside class="stats-panel">
+                <!-- Exercise Selector -->
+                <div class="panel-section">
+                    <h3 class="panel-title">Exercise</h3>
+                    <div class="exercise-selector exercise-grid-4">
+                        <button class="exercise-btn active" data-exercise="squat">
+                            <span class="exercise-icon">🦵</span>
+                            <span class="exercise-name">Squat</span>
+                        </button>
+                        <button class="exercise-btn" data-exercise="pushup">
+                            <span class="exercise-icon">💪</span>
+                            <span class="exercise-name">Push-up</span>
+                        </button>
+                        <button class="exercise-btn" data-exercise="lunge">
+                            <span class="exercise-icon">🏃</span>
+                            <span class="exercise-name">Lunge</span>
+                        </button>
+                        <button class="exercise-btn" data-exercise="plank">
+                            <span class="exercise-icon">🧘</span>
+                            <span class="exercise-name">Plank</span>
+                        </button>
+                        <button class="exercise-btn" data-exercise="deadlift">
+                            <span class="exercise-icon">🏋️</span>
+                            <span class="exercise-name">Deadlift</span>
+                        </button>
+                        <button class="exercise-btn" data-exercise="bicep_curl">
+                            <span class="exercise-icon">💪</span>
+                            <span class="exercise-name">Bicep Curl</span>
+                        </button>
+                        <button class="exercise-btn" data-exercise="shoulder_press">
+                            <span class="exercise-icon">🙌</span>
+                            <span class="exercise-name">Shldr Press</span>
+                        </button>
+                        <button class="exercise-btn" data-exercise="situp">
+                            <span class="exercise-icon">🔄</span>
+                            <span class="exercise-name">Sit-up</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Coach Persona Selector -->
+                <div class="panel-section">
+                    <h3 class="panel-title">Coach</h3>
+                    <div class="coach-selector" id="coachSelector">
+                        <button class="coach-btn active" data-coach="coach_pro" style="--coach-color: #10b981">
+                            <span class="coach-icon">🏆</span>
+                            <span class="coach-name">Coach Pro</span>
+                        </button>
+                        <button class="coach-btn" data-coach="drill_sergeant" style="--coach-color: #ef4444">
+                            <span class="coach-icon">🎖️</span>
+                            <span class="coach-name">Sergeant</span>
+                        </button>
+                        <button class="coach-btn" data-coach="zen_master" style="--coach-color: #8b5cf6">
+                            <span class="coach-icon">🧘</span>
+                            <span class="coach-name">Zen</span>
+                        </button>
+                        <button class="coach-btn" data-coach="hype_beast" style="--coach-color: #f59e0b">
+                            <span class="coach-icon">🔥</span>
+                            <span class="coach-name">Hype</span>
+                        </button>
+                        <button class="coach-btn" data-coach="pop_diva" style="--coach-color: #ec4899">
+                            <span class="coach-icon">🎤</span>
+                            <span class="coach-name">Diva</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Stats -->
+                <div class="panel-section">
+                    <h3 class="panel-title">Live Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-value" id="totalReps">0</span>
+                            <span class="stat-label">Total Reps</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value" id="goodReps">0</span>
+                            <span class="stat-label">Good Form</span>
+                        </div>
+                        <div class="stat-card score">
+                            <span class="stat-value" id="formScore">100%</span>
+                            <span class="stat-label">Form Score</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value" id="duration">0:00</span>
+                            <span class="stat-label">Duration</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Model Pipeline -->
+                <div class="panel-section">
+                    <h3 class="panel-title">AI Pipeline</h3>
+                    <div class="pipeline-info">
+                        <div class="pipeline-row">
+                            <span class="pipeline-label">ML Classification</span>
+                            <span class="ml-value" id="mlClassification">--</span>
+                        </div>
+                        <div class="pipeline-row">
+                            <span class="pipeline-label">Model Agreement</span>
+                            <span class="agreement-value agree" id="modelAgreement">--</span>
+                        </div>
+                        <div class="pipeline-row">
+                            <span class="pipeline-label">Pipeline Latency</span>
+                            <span class="timing-value" id="pipelineTiming">--</span>
+                        </div>
+                        <div id="modelPipelineInfo" class="model-pipeline-info"></div>
+                    </div>
+                </div>
+
+                <!-- GPT-4o Vision Analysis -->
+                <div class="panel-section">
+                    <h3 class="panel-title">Vision AI Analysis</h3>
+                    <div id="visionAnalysis" class="vision-analysis">
+                        <div class="vision-waiting">Waiting for GPT-4o Vision analysis...</div>
+                    </div>
+                </div>
+
+                <!-- Current Angles -->
+                <div class="panel-section">
+                    <h3 class="panel-title">Joint Angles</h3>
+                    <div class="angles-display" id="anglesDisplay">
+                        <div class="angle-item">
+                            <span class="angle-name">Left Knee</span>
+                            <span class="angle-value" id="leftKnee">--</span>
+                        </div>
+                        <div class="angle-item">
+                            <span class="angle-name">Right Knee</span>
+                            <span class="angle-value" id="rightKnee">--</span>
+                        </div>
+                        <div class="angle-item">
+                            <span class="angle-name">Torso</span>
+                            <span class="angle-value" id="torsoAngle">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Tips -->
+                <div class="panel-section">
+                    <h3 class="panel-title">Coach's Tip</h3>
+                    <div class="tip-card" id="tipCard">
+                        <p class="tip-text" id="tipText">
+                            Position yourself so your torso and legs are visible. Side angle works best!
+                        </p>
+                    </div>
+                    <p class="detailed-feedback" id="detailedFeedback"></p>
+                </div>
+
+                <!-- Error Log -->
+                <div class="panel-section">
+                    <h3 class="panel-title">Form Errors</h3>
+                    <div class="error-log" id="errorLog">
+                        <div class="error-empty">No errors detected yet</div>
+                    </div>
+                </div>
+
+                <!-- Workout Plan -->
+                <div class="panel-section">
+                    <h3 class="panel-title">AI Workout Plan</h3>
+                    <div id="workoutPlan" class="workout-plan">
+                        <p class="plan-empty">No plan yet</p>
+                    </div>
+                    <button class="btn btn-sm" id="generatePlanBtn" style="margin-top:8px;width:100%">
+                        Generate AI Plan
+                    </button>
+                </div>
+
+                <!-- Session History -->
+                <div class="panel-section">
+                    <h3 class="panel-title">Recent Sessions</h3>
+                    <div id="sessionHistory" class="session-history">
+                        <p class="plan-empty">No sessions yet</p>
+                    </div>
+                </div>
+
+                <!-- Achievements -->
+                <div class="panel-section">
+                    <h3 class="panel-title">Achievements</h3>
+                    <div id="achievements" class="achievements-grid">
+                        <p class="plan-empty">Complete workouts to earn badges!</p>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>AI Workout Coach v2.0 — Orchestrating 4 AI Models</p>
+            <p class="footer-tech">MediaPipe (Vision) → SVM Classifier (ML) → GPT-4o-mini (NLP) → gTTS (Audio)</p>
+        </footer>
+    </div>
+
+    <!-- Session Summary Modal -->
+    <div class="summary-modal hidden" id="summaryModal">
+        <div class="summary-card">
+            <h2 class="summary-title">Session Complete!</h2>
+            <div class="summary-stats" id="summaryStats"></div>
+            <div class="summary-radar" id="summaryRadar"></div>
+            <div class="summary-achievements" id="summaryAchievements"></div>
+            <div class="summary-coach-note" id="summaryCoachNote"></div>
+            <button class="btn btn-primary" id="closeSummaryBtn" style="width:100%;margin-top:16px">Done</button>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
