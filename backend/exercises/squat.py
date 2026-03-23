@@ -33,10 +33,10 @@ class SquatAnalyzer(ExerciseAnalyzer):
     FORWARD_LEAN_THRESHOLD = 50  # Max acceptable torso forward lean
     KNEE_OVER_TOE_THRESHOLD = 0.05  # Normalized distance
 
-    # Phase detection thresholds (relaxed for webcam accuracy)
-    STANDING_THRESHOLD = 150  # Roughly straight legs
-    DESCENDING_THRESHOLD = 135  # Starting to descend
-    BOTTOM_THRESHOLD = 120  # At or near bottom
+    # Phase detection thresholds (tuned from real webcam angle data)
+    STANDING_THRESHOLD = 142  # Standing position (real data shows 138-149)
+    DESCENDING_THRESHOLD = 130  # Starting to descend
+    BOTTOM_THRESHOLD = 115  # At or near bottom
     
     @property
     def exercise_name(self) -> str:

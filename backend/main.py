@@ -445,6 +445,60 @@ async def websocket_workout(websocket: WebSocket):
                         "message": f"Frame processing error: {str(e)}",
                     })
 
+            elif msg_type == "angles":
+                # NEW: Client-side MediaPipe sends pre-computed angles + landmarks
+                # Server only runs ML classification + feedback (no pose estimation needed)
+                if not orchestrator:
+                    orchestrator = WorkoutOrchestrator(exercise_type=ExerciseType.SQUAT)
+                    orchestrators[session_id] = orchestrator
+
+                try:
+                    angles = message.get("angles", {})
+                    landmark_data = message.get("landmarks", {})
+
+                    # Log angles periodically for debugging
+                    if orchestrator.session_stats.frames_processed % 25 == 0:
+                        elbow = angles.get("left_elbow_angle", 0)
+                        knee = angles.get("left_knee_angle", 0)
+                        phase = orchestrator.current_analyzer.rep_counter.phase.value
+                        reps = orchestrator.current_analyzer.rep_counter.count
+                        logger.info(f"Angles: elbow={elbow:.0f} knee={knee:.0f} phase={phase} reps={reps} lm={len(landmark_data)}")
+
+                    result = orchestrator.process_angles(angles, landmark_data)
+
+                    await websocket.send_json({
+                        "type": "analysis",
+                        **result,
+                    })
+
+                    # Trigger async LLM feedback
+                    if (result.get("analysis", {}).get("errors")
+                            and orchestrator.feedback_generator.client):
+                        # Create a minimal AnalysisResult for LLM
+                        from .exercises.base import AnalysisResult, ExercisePhase
+                        analysis = AnalysisResult(
+                            exercise_type=result["analysis"]["exercise_type"],
+                            phase=ExercisePhase(result["analysis"]["phase"]),
+                            errors=[],
+                            rep_count=result["analysis"]["rep_count"],
+                            is_good_form=result["analysis"]["is_good_form"],
+                            angles=angles,
+                            feedback_priority=[],
+                        )
+                        asyncio.create_task(
+                            _send_llm_feedback_from_analysis(websocket, orchestrator, analysis)
+                        )
+
+                    # Trigger async TTS
+                    spoken = result.get("feedback", {}).get("spoken", "")
+                    if spoken and orchestrator.tts_engine.is_available:
+                        asyncio.create_task(
+                            _send_tts_audio(websocket, orchestrator, spoken)
+                        )
+
+                except Exception as e:
+                    logger.error(f"Angles processing error: {e}")
+
             elif msg_type == "reset":
                 if orchestrator:
                     orchestrator.reset_session()
@@ -496,6 +550,22 @@ async def _send_llm_feedback(
             })
     except Exception as e:
         logger.debug(f"LLM feedback task error: {e}")
+
+
+async def _send_llm_feedback_from_analysis(websocket, orchestrator, analysis):
+    """Send LLM feedback from a pre-built AnalysisResult (for angles-mode)."""
+    try:
+        llm_feedback = await orchestrator.feedback_generator.generate_personalized_feedback(analysis)
+        if not llm_feedback.is_cached:
+            await websocket.send_json({
+                "type": "llm_feedback",
+                "spoken": llm_feedback.spoken_feedback,
+                "detailed": llm_feedback.detailed_feedback,
+                "tip": llm_feedback.tip,
+                "encouragement": llm_feedback.encouragement,
+            })
+    except Exception as e:
+        logger.debug(f"LLM feedback (angles) error: {e}")
 
 
 async def _send_tts_audio(

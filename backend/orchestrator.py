@@ -263,6 +263,7 @@ class WorkoutOrchestrator:
         self._last_vision_time: float = 0.0
         self._last_angles: dict = {}
 
+
     def set_exercise(self, exercise_type: ExerciseType):
         """Change the current exercise type."""
         self.current_exercise = exercise_type
@@ -275,6 +276,88 @@ class WorkoutOrchestrator:
         self._last_feedback = None
         self._last_errors = []
         self._last_tts_text = ""
+
+    def process_angles(self, angles: dict, landmark_data: dict) -> dict:
+        """
+        Process pre-computed angles from client-side MediaPipe.
+
+        This is the hybrid architecture path: pose estimation runs in the
+        browser at 30+ FPS, and only the computed angles are sent to the
+        server for ML classification and coaching feedback.
+        """
+        import time as _time
+        timing = PipelineTiming()
+        pipeline_start = _time.time()
+
+
+        # Build a PoseResult from client-sent data
+        from .pose_estimator import PoseResult, Landmark
+        landmarks = {}
+        for name, ld in landmark_data.items():
+            landmarks[name] = Landmark(
+                x=ld.get("x", 0), y=ld.get("y", 0),
+                z=ld.get("z", 0), visibility=ld.get("visibility", 0),
+            )
+
+        pose_result = PoseResult(
+            landmarks=landmarks,
+            angles=angles,
+            is_valid=len(landmarks) >= 5,
+            confidence=sum(lm.visibility for lm in landmarks.values()) / max(len(landmarks), 1),
+        )
+
+        # Stage 2a: ML Classification
+        t0 = _time.time()
+        ml_classification = None
+        if pose_result.is_valid and self.form_classifier.is_available(self.current_exercise.value):
+            ml_classification = self.form_classifier.classify(
+                exercise=self.current_exercise.value,
+                pose_angles=angles,
+                pose_landmarks=landmarks,
+            )
+        timing.ml_classification_ms = (_time.time() - t0) * 1000
+
+        # Stage 2b: Rule-Based Analysis
+        t0 = _time.time()
+        analysis_result = self.current_analyzer.analyze(pose_result)
+        timing.rule_analysis_ms = (_time.time() - t0) * 1000
+
+        # Stage 3: Fusion
+        t0 = _time.time()
+        models_agree = self._fuse_results(analysis_result, ml_classification)
+        timing.fusion_ms = (_time.time() - t0) * 1000
+
+        # Stage 4: Feedback
+        t0 = _time.time()
+        feedback = self._generate_feedback(analysis_result, ml_classification)
+        timing.feedback_ms = (_time.time() - t0) * 1000
+
+        # Update session
+        self._update_session_stats(analysis_result, ml_classification)
+        self.session_stats.frames_processed += 1
+        self._last_angles = angles
+
+        timing.total_ms = (_time.time() - pipeline_start) * 1000
+
+        # Return as dict (not OrchestrationResult — no pose_result needed by client)
+        return {
+            "pose": {
+                "is_valid": pose_result.is_valid,
+                "confidence": pose_result.confidence,
+                "angles": angles,
+            },
+            "analysis": analysis_result.to_dict(),
+            "ml_classification": ml_classification.to_dict() if ml_classification else None,
+            "feedback": {
+                "spoken": feedback.spoken_feedback,
+                "detailed": feedback.detailed_feedback,
+                "tip": feedback.tip,
+                "encouragement": feedback.encouragement,
+            },
+            "session": self.session_stats.to_dict(),
+            "pipeline_timing": timing.to_dict(),
+            "models_agree": models_agree,
+        }
 
     def process_frame(self, frame: np.ndarray) -> OrchestrationResult:
         """

@@ -35,10 +35,10 @@ class ShoulderPressAnalyzer(ExerciseAnalyzer):
     ASYMMETRIC_THRESHOLD = 30  # Max left-right elbow angle difference
     LOCKOUT_THRESHOLD = 150  # Elbow angle for full lockout overhead
 
-    # Phase detection thresholds (based on elbow angle)
-    STANDING_THRESHOLD = 100  # Elbows bent at sides (start position)
-    ASCENDING_THRESHOLD = 130  # Mid-press
-    TOP_THRESHOLD = 160  # Arms overhead (fully pressed)
+    # Phase detection thresholds (relaxed for webcam front-view angle compression)
+    STANDING_THRESHOLD = 115  # Elbows bent at sides (start position)
+    ASCENDING_THRESHOLD = 125  # Mid-press
+    TOP_THRESHOLD = 140  # Arms overhead (fully pressed)
 
     @property
     def exercise_name(self) -> str:

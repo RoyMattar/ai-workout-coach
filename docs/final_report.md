@@ -139,9 +139,9 @@ The pipeline architecture was chosen over two principal alternatives after caref
 
 A further architectural consideration was the distinction between synchronous and asynchronous processing within the pipeline. Template feedback generation was implemented as a synchronous operation because its sub-millisecond latency made it suitable for the critical path — every frame could receive immediate coaching cues without perceptible delay. In contrast, LLM feedback generation and TTS audio synthesis were implemented as asynchronous tasks dispatched via `asyncio.create_task()`. This design pattern was essential because these operations involved external API calls with latencies ranging from 500ms to 3 seconds; executing them synchronously would have blocked frame processing and reduced throughput to below 1 FPS. The asynchronous design meant that a frame could be analysed, receive immediate template feedback, and simultaneously trigger background LLM and TTS requests whose results would be delivered to the client as follow-up WebSocket messages when available. This progressive response delivery model ensured that the user experienced no perceptible lag while still receiving the richest possible coaching.
 
-The real-time communication layer employed the WebSocket protocol rather than HTTP polling or Server-Sent Events. WebSocket was selected because the application required bidirectional, low-latency communication: the client streamed video frames to the server while simultaneously receiving multiple response types (skeleton coordinates, form classifications, coaching text, audio data). The frontend captured webcam frames at 15 FPS and transmitted each as a base64-encoded JPEG over the WebSocket connection. The server processed each frame through the pipeline and returned structured JSON messages with a `type` field discriminating between frame results (skeleton overlay data, form scores, ML predictions), coaching feedback (template text, LLM-generated text), vision analysis results, and audio data (base64-encoded MP3). This frame-streaming approach at 15 FPS represented a deliberate balance between responsiveness and bandwidth consumption; higher frame rates would have increased network load without meaningfully improving the coaching experience, while lower rates would have introduced perceptible visual lag in the skeleton overlay.
+The real-time communication layer employed a hybrid client-server architecture over WebSocket. Initially, the client streamed base64-encoded JPEG frames to the server for pose estimation, but this introduced 50–100ms round-trip latency causing visible skeleton lag. The final architecture moved MediaPipe pose estimation to the browser, where it ran via WASM/WebGL at 60+ FPS with zero network latency for skeleton rendering. The client computed eight joint angles locally and transmitted them as compact JSON (~200 bytes) at 12 messages per second. The server received pre-computed angles and returned structured JSON messages with a `type` field discriminating between form classifications, coaching feedback (template text, LLM-generated text), vision analysis results, and audio data (base64-encoded MP3).
 
-**Stage 1 — Pose Estimation (Computer Vision domain):** MediaPipe BlazePose extracts 33 body landmarks from each video frame, computing joint angles for knees, hips, elbows, torso inclination, and shoulder-hip alignment. Processing averages 8.2ms per frame on a standard laptop CPU.
+**Stage 1 — Pose Estimation (Computer Vision domain, client-side):** MediaPipe PoseLandmarker ran in the browser via the `@mediapipe/tasks-vision` WASM module with GPU delegate (WebGL), extracting 33 body landmarks and drawing the skeleton overlay locally at 60+ FPS. Joint angles for knees, hips, elbows, torso inclination, and shoulder-hip alignment were computed client-side before transmission.
 
 **Stage 2a — ML Form Classification (Classification domain):** A KNN classifier trained on 1,483 real video frames predicts form quality (correct or incorrect). This model achieves 97.4% accuracy with inference time under 0.01ms per frame. Real-data models are available for five exercises (push-up, squat, deadlift, bicep curl, shoulder press), with knowledge-distilled models for remaining exercises.
 
@@ -163,7 +163,7 @@ The real-time communication layer employed the WebSocket protocol rather than HT
 
 Every architectural decision was justified through empirical evaluation.
 
-**Pose estimation model selection:** MediaPipe BlazePose was selected over OpenPose and MoveNet after comparative evaluation. OpenPose requires GPU acceleration for real-time performance, incompatible with the accessibility goal of running on consumer laptops. MoveNet provides only 17 keypoints — insufficient for computing torso angle, knee-ankle alignment, and shoulder-hip ratio required by the form analysis. MediaPipe's 33 landmarks, CPU-native 30+ FPS performance, and well-documented Tasks API made it the clear choice. An alternative considered was COCO WholeBody (Jin et al., 2020), which provides 133 keypoints including detailed hand and face landmarks; however, the additional computational overhead would have reduced throughput below 15 FPS on target hardware, and the extra landmarks were not relevant to the joint angles required for exercise form assessment.
+**Pose estimation model selection and deployment:** MediaPipe was selected over OpenPose (GPU-dependent) and MoveNet (only 17 keypoints, insufficient for torso and shoulder-hip analysis). MediaPipe's 33 landmarks and well-documented Tasks API made it the clear choice. Initially deployed server-side, testing revealed that streaming frames to the server and returning landmarks introduced 50–100ms round-trip latency, causing visible skeleton lag. The architecture was revised to run MediaPipe client-side in the browser via `@mediapipe/tasks-vision` (WASM/WebGL), using the lighter `pose_landmarker_lite` model (~4MB). This eliminated network latency entirely: skeleton overlay rendered locally at 60+ FPS, and only computed joint angles (~200 bytes) were sent to the server 12 times per second for ML classification and coaching.
 
 **Form classification approach:** The decision to use KNN as the primary form classifier was the result of systematic evaluation of seven approaches on the same dataset of 1,483 real video frames. KNN achieved 97.4% accuracy with 0.005ms inference time, marginally outperforming SVM (97.0%) while being simpler and more interpretable. Neural network architectures (MLP with 64-32 and 128-64-32 hidden layers) achieved 91.2% and 95.8% respectively, confirming that the dataset size was insufficient for deep learning advantages to manifest. Rule-based thresholds achieved only 51.7%, and GPT-4o Vision scored 60%. The selection of KNN was therefore evidence-based, not assumed. A decision tree classifier was also briefly considered for its superior interpretability — producing explicit if-then rules — but was rejected because its axis-aligned decision boundaries are poorly suited to the angular feature space where form quality boundaries are oblique.
 
@@ -219,7 +219,7 @@ The achievement system provides eight milestone badges — such as "First Rep," 
 
 | Component | Technology | Justification |
 |-----------|-----------|---------------|
-| Pose estimation | MediaPipe PoseLandmarker | 33 landmarks, 30+ FPS on CPU, Tasks API |
+| Pose estimation | MediaPipe PoseLandmarker (client-side WASM/WebGL) | 33 landmarks, 60+ FPS in browser |
 | Form classification | scikit-learn KNN | 97.4% accuracy, <0.01ms inference |
 | NLP feedback | OpenAI GPT-4o-mini | Structured output, persona adaptation |
 | Visual analysis | OpenAI GPT-4o Vision | Independent form assessment from images |
@@ -237,9 +237,7 @@ The achievement system provides eight milestone badges — such as "First Rep," 
 
 ## 4.1 Pose Estimation Pipeline
 
-The pose estimation module wraps MediaPipe's PoseLandmarker using the Tasks API, which superseded the earlier Solutions API during development. The heavy pose landmarker model (~26MB) is managed through a `_ensure_model()` function that checks for the model file's existence on disk at initialisation and, if absent, downloads it from Google's model repository using an HTTP request. This mechanism ensured that the system could be deployed on any machine without requiring manual model file management — first run triggered an automatic download, and subsequent runs used the cached file. The download path was configurable, defaulting to a `.models/` directory within the project root, and the function verified file integrity by checking file size after download to guard against partial or corrupted downloads.
-
-For each video frame, the module converts BGR to RGB colour space (via `cv2.cvtColor`) before passing data to MediaPipe, since OpenCV captures in BGR while MediaPipe expects RGB. Omitting this conversion degraded landmark detection accuracy. The detector produces up to 33 body landmarks with per-landmark visibility and presence confidence scores.
+The pose estimation pipeline employed a hybrid architecture. MediaPipe PoseLandmarker ran client-side in the browser via the `@mediapipe/tasks-vision` WASM module, using the `pose_landmarker_lite` model (~4MB) with GPU delegate (WebGL) and CPU fallback. The `detectForVideo()` method ran synchronously within a `requestAnimationFrame` loop, achieving 60+ FPS. The detector produced up to 33 body landmarks with per-landmark visibility and presence confidence scores, and the skeleton overlay was drawn immediately from raw landmarks with zero network latency.
 
 From the 33 detected landmarks, 13 key points are extracted: nose, left/right shoulders, elbows, wrists, hips, knees, and ankles. Joint angles are calculated using three-point vector geometry. Given three landmarks forming a joint (A-B-C), the angle at vertex B is computed as:
 
@@ -350,15 +348,9 @@ The systematic comparison of seven model architectures constituted the most sign
 | Rule-based thresholds | 51.7% | N/A | 0.010ms | Free |
 | GPT-4o Vision | 60.0% | N/A | 1,540ms | ~$150 (est.) |
 
-KNN's optimality for this problem can be attributed to three factors. First, the feature space is small (8 angular features) and well-structured, making distance-based classification effective. Second, KNN's non-parametric nature handles irregular decision boundaries without assumptions about data distribution. Third, with 1,483 samples, the dataset is large enough for KNN to find meaningful neighbours but too small for neural networks to learn complex representations that outperform simpler methods.
+KNN's optimality was attributable to the small, well-structured feature space (8 angles) and sufficient data for distance-based classification but insufficient for neural networks. The KNN-SVM gap (0.4pp) was not statistically significant; KNN was selected for simplicity. Both MLP architectures underperformed due to the limited 1,483-sample training set (Pedregosa et al., 2011).
 
-The 0.4 percentage point difference between KNN (97.4% +/- 1.0%) and SVM (97.0% +/- 1.6%) was not statistically significant, as their standard deviation bounds overlapped. KNN was selected over SVM for its greater simplicity and marginally lower variance. The Random Forest's 95.9% was more clearly separated, with the 1.5 percentage point gap exceeding standard deviation bounds.
-
-The two MLP architectures illustrated dataset size limitations. The smaller MLP (64-32) achieved 91.2% with high variance (+/- 2.9%), while the larger MLP (128-64-32) achieved 95.8% (+/- 1.2%) — the additional capacity better approximated the decision boundary. Both underperformed non-parametric classifiers due to the limited training set of 1,483 samples, well below the range where neural networks typically demonstrate advantages (Pedregosa et al., 2011).
-
-The rule-based system's 51.7% accuracy warrants detailed analysis. Its 98.6% precision on correct form (true positive rate) was misleadingly high: the system rarely flagged any form as incorrect (11.0% recall on wrong form), effectively defaulting to "good form" for nearly all inputs. This asymmetry — high precision, catastrophic recall — renders the system practically useless for its intended purpose of identifying form errors.
-
-GPT-4o Vision's 60% accuracy was the most surprising result. The model correctly identified 9 out of 10 correct-form videos but only 3 out of 10 incorrect-form videos, suggesting it defaults to classifying exercise form as acceptable. This finding demonstrates that general-purpose vision models, despite their sophistication, lack the domain-specific calibration required for precise binary classification of exercise form quality.
+The rule-based system's 51.7% accuracy masked a dangerous asymmetry: 98.6% true positive rate but only 11.0% recall on incorrect form, effectively never detecting form errors. GPT-4o Vision (60%) correctly identified 9/10 correct-form but only 3/10 incorrect-form videos, demonstrating that general-purpose vision models lack domain-specific calibration for binary form classification.
 
 *Figure 5: Bar chart comparing accuracy across all seven model approaches.*
 
@@ -396,34 +388,30 @@ The optimal threshold of 95% achieved 75% end-to-end accuracy. The 14.3 percenta
 
 Similar tuning was applied to hip sag detection (threshold increased from 0.05 to 0.06 for push-ups and 0.09 for planks, improving plank accuracy from 14.7% to 82.4%) and knee cave analysis (adding a side-view guard improved squat accuracy from 41.7% to 69.0%).
 
+**Webcam angle compression.** Real user testing revealed that front-facing webcam angles were significantly compressed compared to actual joint angles due to perspective projection. A full bicep curl producing an actual elbow angle of ~40° appeared as ~100° from the front camera. Phase detection thresholds had to be iteratively calibrated through live testing sessions: bicep curl `STANDING_THRESHOLD` was adjusted from 150° to 130° and `BOTTOM` from 60° to 108°; shoulder press `TOP` from 160° to 140°. This "user-in-the-loop" calibration highlighted that theoretical biomechanical thresholds are insufficient — deployment requires empirical tuning against actual camera perspectives, and future work would benefit from automatic per-user threshold calibration.
+
 Accuracy variation across exercises was attributable to three factors: (1) camera angle — side-filmed exercises (push-ups, planks) produced more consistent results than variably-angled exercises (squats, deadlifts); (2) body visibility — close-up framing in curl videos occluded the lower body, reducing detection rates; and (3) movement complexity — push-ups involve constrained single-plane motion, while squats require three-joint flexion with 3D mechanics difficult to capture from 2D video.
 
 ## 5.4 Pipeline Performance
 
-*Table 8: Pipeline latency breakdown (50-frame benchmark)*
+*Table 8: Pipeline latency breakdown (hybrid architecture)*
 
-| Stage | Mean | Std Dev | Min | Max |
-|-------|------|---------|-----|-----|
-| Pose estimation | 8.24ms | ±0.54ms | 7.80ms | 10.94ms |
-| ML classification | <0.01ms | — | — | — |
-| Rule-based analysis | <0.01ms | — | — | — |
-| Result fusion | <0.01ms | — | — | — |
-| Feedback generation | <0.01ms | — | — | — |
-| **Total** | **8.25ms** | ±0.54ms | 7.81ms | 10.95ms |
+| Stage | Location | Latency |
+|-------|----------|---------|
+| Pose estimation | Client (browser WASM/WebGL) | 9–17ms per frame |
+| Skeleton rendering | Client | ~0ms (same frame) |
+| ML classification | Server | <0.01ms |
+| Rule-based analysis | Server | <0.01ms |
+| Result fusion + feedback | Server | <0.01ms |
+| **Server total** | Server | **<1ms per angle message** |
 
-The system achieves 121 FPS on synthetic frames and 14–16 FPS on real video processing, exceeding the 15 FPS target. Pose estimation dominates latency (99.9% of total); ML classification, rule-based analysis, and fusion add negligible overhead. MediaPipe achieved 81–100% pose detection rates across exercise types, with lower rates on bicep curls where close framing occluded landmarks.
+Moving pose estimation client-side was the single largest UX improvement. The previous server-side architecture introduced 50–100ms perceived latency (frame encoding, network round-trip, and rendering delay); the hybrid architecture reduced perceived latency to ~10ms (measured via `performance.now()`). MediaPipe achieved 81–100% pose detection rates across exercise types.
 
 ## 5.5 User Experience Evaluation
 
 ### 5.5.1 Heuristic Evaluation
 
-A heuristic evaluation was conducted against all ten of Nielsen's usability heuristics (Nielsen, 1994) to systematically assess the interface design.
-
-The system was evaluated against all ten of Nielsen's heuristics. Six were rated **strong**: visibility of system status (the AI Pipeline panel exposes model states, predictions, agreement, and latency in real-time — a transparency feature no competitor offers); match between system and real world (skeleton overlay mirrors body structure, phase indicators use natural language); user control and freedom (start/stop/reset, mid-session exercise and coach switching, guest access); consistency and standards (uniform dark theme, consistent colour-coded feedback — green/amber/red); recognition rather than recall (visual exercise and coach grids with icons); and aesthetic and minimalist design (high-contrast dark theme suited to gym environments).
-
-Three heuristics were rated **moderate**: error prevention (the `_is_exercise_pose()` validation gate provides repositioning guidance but was occasionally over-conservative); flexibility and efficiency of use (supports novice and power-user workflows but lacks keyboard shortcuts); and error recovery (specific corrective messages for form errors and auto-reconnect for network issues, but could offer more spatial guidance).
-
-One heuristic was rated **weak**: help and documentation — no formal help page or onboarding tutorial was implemented due to time constraints, representing the clearest improvement opportunity.
+A heuristic evaluation against Nielsen's ten usability heuristics (Nielsen, 1994) rated six heuristics **strong**, three **moderate**, and one **weak** (help and documentation — no onboarding tutorial was implemented).
 
 *Table 9: Heuristic evaluation summary*
 
@@ -477,48 +465,29 @@ The calculated SUS score was **78.4** (out of 100), which falls in the "Good" ca
 | The AI Pipeline panel was interesting to see | 3.9 | 0.8 |
 | The system responded quickly enough | 4.4 | 0.5 |
 
-**Key findings from the survey:**
-- The skeleton overlay received the highest rating (4.6/5), confirming that visual pose feedback is the system's most valued feature.
-- Coach personas scored highly for engagement (4.3/5), with the Drill Sergeant and Pop Diva cited as most entertaining.
-- Trust in form assessment was the lowest-rated item (3.5/5), with participants noting occasional false positives. One participant commented: "It said my form was fine when I deliberately did a bad rep."
-- Voice coaching divided opinion (3.8/5, highest SD of 1.0): beginners found it helpful while advanced users found it distracting during exercise.
-- Two participants specifically mentioned that the "not in position" message appeared too frequently with their webcam setup, consistent with the heuristic evaluation finding on H5.
-
-**Open-ended feedback themes:** Participants most frequently requested a mobile app version (4/8), more exercises (3/8), and a progress chart showing improvement over time (3/8). Two participants suggested the ability to record and replay sessions.
+**Key findings:** The skeleton overlay was most valued (4.6/5). Trust in form assessment was lowest (3.5/5), with one participant noting: "It said my form was fine when I deliberately did a bad rep." Voice coaching divided opinion (3.8/5): beginners found it helpful while advanced users found it distracting. Participants most frequently requested a mobile app (4/8), more exercises (3/8), and progress charts (3/8).
 
 ## 5.6 Lessons Learned
 
-The development process yielded several insights that would inform future work in AI-based coaching systems.
+**What worked well.** The iterative, evaluation-driven approach produced unexpected findings (KNN outperforming neural networks, GPT-4o Vision underperforming rule-based on incorrect form). Real video data was transformative: the 7.4pp gain from synthetic to real data demonstrated that ecological validity matters more than data volume.
 
-**What worked well.** The iterative, evaluation-driven approach proved essential — each decision was motivated by measured performance rather than assumptions. The systematic seven-model comparison produced unexpected findings (KNN outperforming neural networks, GPT-4o Vision underperforming rule-based thresholds on incorrect form) that would have been missed without controlled evaluation. Real video data was transformative: the 7.4 percentage point gain from synthetic to real data demonstrated that ecological validity matters more than data volume.
-
-**What would be done differently.** Adopting real video data earlier would have revealed rule-based limitations sooner — even 20 labelled videos would have exposed the 51.7% accuracy problem months earlier. Greater investment in labelled datasets would also have strengthened evaluation: push-ups were the only exercise with human-annotated form quality labels, and knowledge distillation for other exercises introduced an unquantified accuracy ceiling.
-
-**The importance of representative evaluation data.** Evaluation data must reflect deployment conditions. Synthetic evaluation (90.0%) masked real limitations; rule-based thresholds derived from textbooks appeared reasonable but failed against real movement variability. This discrepancy — well-documented in ML deployment (Sculley et al., 2015) — reinforced that coaching systems must be validated on data reflecting the diversity of users, camera angles, and movement styles encountered in practice.
+**What would be done differently.** Adopting real video data earlier would have exposed the rule-based system's 51.7% accuracy months sooner. Greater investment in human-annotated datasets would have eliminated the knowledge distillation accuracy ceiling. Representative evaluation data reflecting deployment conditions (diverse users, camera angles, movement styles) proved essential — synthetic evaluation masked real limitations (Sculley et al., 2015).
 
 ## 5.7 Critical Analysis
 
-**Successes.** The system orchestrates six AI models across four data domains, exceeding the template's requirement of three models. The ML-primary form classifier achieves 97.4% accuracy — a 45.7 percentage point improvement over the rule-based approach it replaced. Real-time performance (121 FPS) substantially exceeds requirements. The systematic evaluation of seven model architectures provides the evidence-based model selection explicitly requested by the template. The transparent AI pipeline panel represents a novel UX contribution not found in any competitor system analysed.
+**Successes.** The system orchestrates six AI models across four data domains, exceeding the template's requirement of three models. The ML-primary form classifier achieves 97.4% accuracy — a 45.7 percentage point improvement over the rule-based approach it replaced. Client-side pose estimation at 60+ FPS substantially exceeds requirements. The systematic evaluation of seven model architectures provides the evidence-based model selection explicitly requested by the template. The transparent AI pipeline panel represents a novel UX contribution not found in any competitor system analysed.
 
 **Failures.** GPT-4o Vision, despite being the most sophisticated and expensive model in the pipeline, achieved only 60% accuracy on form classification — the lowest of all approaches tested. This unexpected result demonstrates that general-purpose models do not automatically outperform domain-specific classifiers. The end-to-end push-up classification accuracy of 75% on labelled videos, while a meaningful improvement over rule-based (51.7%), falls short of the precision needed for production deployment where user trust requires >90% reliability.
 
-**Limitations.** The system operates from a single 2D camera perspective, fundamentally limiting its ability to assess 3D body mechanics — errors like knee cave are unreliable from side view. The labelled evaluation dataset is small (50 correct + 50 wrong push-up videos); larger datasets would enable more robust accuracy estimates. For exercises other than push-ups, form quality labels were generated by knowledge distillation from the rule-based system rather than human annotation, meaning the ML models inherit any systematic biases of the rules. No longitudinal user study was conducted — all evaluation was single-session. The coach personas, while engaging, have not been validated through formal user experience research.
+**Limitations.** The system operates from a single 2D camera perspective, limiting 3D mechanics assessment. The labelled evaluation dataset was small (100 push-up videos); for other exercises, knowledge-distilled labels introduced circularity — the 97.4% accuracy represents agreement with tuned rules, not expert biomechanical judgement (Hinton et al., 2015). Sampling bias in the Kaggle data (fitness enthusiasts with higher baseline form) may cause overestimation of real-world accuracy. No longitudinal user study was conducted. The workout planner cannot track external load (weights), and generalisability across diverse populations was not evaluated.
 
-The evaluation data was subject to sampling bias: Kaggle videos were contributed by fitness enthusiasts likely exhibiting higher baseline form quality than the target demographic of beginners. The system's measured accuracy may therefore overestimate performance on real deployment inputs involving more extreme form deviations or unconventional camera placements.
+**False negative cost asymmetry.** False negatives (approving dangerous form) carry higher cost than false positives (flagging good form). The rule-based system's 11% true negative rate was therefore actively dangerous. The KNN's balanced 99% precision and recall substantially reduced this asymmetry.
 
-The knowledge distillation approach introduced a fundamental circularity: the ML models were trained on labels from the tuned rule-based system, not ground truth human judgements. The 97.4% accuracy therefore represents agreement with the tuned rules, not necessarily with expert biomechanical judgement. If the rules systematically mislabelled certain configurations, the ML models would replicate these errors — a known limitation of distillation from imperfect teachers (Hinton et al., 2015) that would require human-annotated labels to resolve.
+**Evaluation methodology limitations.** Subgroup analysis (by camera angle, lighting, body type), A/B testing against unassisted groups, and longitudinal multi-session evaluation would have strengthened the findings but were not undertaken due to time constraints.
 
-A further limitation concerns **external load tracking**. The adaptive workout planner generates plans with sets and reps but does not account for external weights (dumbbells, barbells, resistance bands). For exercises like bicep curls and shoulder press, progressive overload — gradually increasing resistance — is essential for continued strength development. However, the camera-based system cannot detect what weight a user is lifting, meaning the planner's progression relies solely on rep counts and form scores. A user could theoretically reduce weight to achieve higher form scores, undermining the training stimulus. Integrating user-reported weight data or wearable load sensors would address this limitation.
+**Improving lower-performing exercises.** Squat (69.0%) and deadlift (59.8%) accuracies suffered from variable camera angles and stance variations (conventional vs. sumo). Remediation paths include automatic camera-angle detection, stance-specific classifiers, and temporal analysis across frame sequences rather than single-frame classification.
 
-A related limitation concerns generalisability across diverse populations. All evaluation used videos of predominantly young, able-bodied adults in well-lit gym environments. Performance for elderly users, individuals with different body proportions, or users in low-light environments was not evaluated. MediaPipe's accuracy degrades on body types underrepresented in its training data, and the KNN's angle features may encode assumptions about "normal" joint ranges that do not hold for all populations. Production deployment would require evaluation across these dimensions.
-
-**False negative cost asymmetry.** In exercise coaching, the cost of errors is asymmetric: a false negative (telling a user their form is correct when it is actually dangerous) carries significantly higher cost than a false positive (flagging good form as problematic). False negatives risk injury, while false positives merely cause minor frustration. The rule-based system's 11% true negative rate was therefore not merely inaccurate but actively dangerous — it almost never warned users about genuine form errors. The KNN classifier's balanced precision and recall (99% for both classes) substantially reduces this asymmetry, though production deployment would benefit from threshold calibration that explicitly prioritises recall over precision.
-
-**Evaluation methodology limitations.** The evaluation would have been strengthened by several additional approaches not undertaken due to time constraints. Subgroup analysis — evaluating accuracy separately for different camera angles, lighting conditions, and body types — would have revealed whether the system performs equitably across user populations. A/B testing with real users, comparing workout outcomes between system-assisted and unassisted groups, would have measured whether the coaching actually improves form over time. Longitudinal evaluation tracking the same users across multiple sessions would have assessed whether the feedback leads to lasting improvement or merely temporary compliance — a distinction the motor learning literature identifies as critical (Swinnen, 1996).
-
-**Improving lower-performing exercises.** The squat (69.0%) and deadlift (59.8%) accuracies were notably lower than other exercises. Analysis identified specific causes and remediation paths. Squat videos in the evaluation dataset were filmed from highly variable angles — front, side, and 45-degree — while the pose validation gate and knee cave detection were tuned for side-view. Collecting a squat-specific labelled dataset with controlled camera angles, or implementing automatic camera-angle detection to select appropriate thresholds, would directly address this. Deadlift accuracy suffered because the hip-hinge movement pattern produces hip angles that vary significantly between conventional and sumo stance; training separate classifiers per stance or adding stance detection as a preprocessing step would improve classification. Both exercises would also benefit from temporal analysis — a single frame of a deadlift at mid-pull looks similar to a squat at mid-descent, but the movement trajectory over multiple frames is distinctive.
-
-**Possible extensions.** Multi-camera or depth sensor fusion would enable 3D biomechanical analysis, resolving the single-viewpoint limitation that affected squat and deadlift accuracy. LSTM or Transformer architectures applied to temporal sequences of poses could capture movement quality over time rather than frame-by-frame, particularly benefiting exercises with similar static postures but different dynamic patterns. A large-scale dataset with human-annotated form quality labels would eliminate the knowledge distillation limitation. Mobile deployment using React Native would improve accessibility. Google OAuth integration would streamline multi-user onboarding.
+**Possible extensions.** Multi-camera or depth sensor fusion for 3D analysis, temporal models (LSTM/Transformer) for movement quality over time, human-annotated form quality datasets, automatic per-user threshold calibration to address webcam angle compression, and mobile deployment would all strengthen the system.
 
 ---
 

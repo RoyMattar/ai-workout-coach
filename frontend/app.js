@@ -1,21 +1,26 @@
 /**
  * AI Workout Coach - Frontend Application
  *
- * Handles camera capture, WebSocket communication, skeleton overlay rendering,
- * TTS audio playback, and UI updates for real-time workout form analysis.
+ * HYBRID ARCHITECTURE:
+ * - Pose estimation runs CLIENT-SIDE via MediaPipe JS (30+ FPS, zero latency)
+ * - Skeleton overlay drawn locally in real-time
+ * - Only computed angles are sent to server for ML classification + coaching
  *
- * Communicates with a backend that orchestrates four AI models:
- * 1. MediaPipe BlazePose (pose estimation)
- * 2. scikit-learn SVM (form classification)
- * 3. GPT-4o-mini (NLP feedback)
- * 4. gTTS (text-to-speech)
+ * Server-side models (orchestrated):
+ * 1. KNN form classifier (ML classification)
+ * 2. GPT-4o-mini (NLP feedback)
+ * 3. GPT-4o Vision (visual analysis)
+ * 4. OpenAI TTS (voice coaching)
  */
+
+// MediaPipe is loaded dynamically in initPoseLandmarker() to handle import failures gracefully
+let FilesetResolver, PoseLandmarker;
 
 class WorkoutCoach {
     constructor() {
         this.config = {
             wsUrl: `ws://${window.location.host}/ws/workout`,
-            frameRate: 15,
+            analysisRate: 12,  // Send angles to server N times per second (higher = better rep detection)
             videoWidth: 640,
             videoHeight: 480,
         };
@@ -64,6 +69,13 @@ class WorkoutCoach {
         // Canvas context for skeleton overlay
         this.ctx = this.elements.canvas.getContext('2d');
 
+        // Client-side MediaPipe pose landmarker
+        this.poseLandmarker = null;
+        this._lastVideoTime = -1;
+        this._currentLandmarks = null;  // Raw landmarks from client-side MediaPipe
+        this._isGoodForm = true;
+        this._lastAnalysisSend = 0;     // Throttle server sends
+
         // Skeleton connections for drawing
         this.skeletonConnections = [
             ['left_shoulder', 'right_shoulder'],
@@ -87,7 +99,6 @@ class WorkoutCoach {
         this.authToken = localStorage.getItem('authToken');
         this.username = localStorage.getItem('username');
 
-        // Show auth modal if not logged in
         if (!this.authToken) {
             this.showAuthModal();
         } else {
@@ -96,9 +107,63 @@ class WorkoutCoach {
 
         this.bindEvents();
         await this.setupCamera();
+        await this.initPoseLandmarker();
         this.loadSessionHistory();
         this.loadAchievements();
         this.loadCurrentPlan();
+    }
+
+    async initPoseLandmarker() {
+        console.log("Loading MediaPipe PoseLandmarker...");
+        try {
+            // Dynamic import — works even if CDN is slow or fails
+            const mp = await import("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs");
+            FilesetResolver = mp.FilesetResolver;
+            PoseLandmarker = mp.PoseLandmarker;
+            console.log("MediaPipe module imported successfully");
+        } catch (importErr) {
+            console.error("Failed to import MediaPipe module:", importErr);
+            this.updateFeedback("Pose model loading failed. Using server fallback.", "warning");
+            return;
+        }
+
+        try {
+            const vision = await FilesetResolver.forVisionTasks(
+                "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
+            );
+            console.log("WASM runtime loaded");
+
+            this.poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
+                baseOptions: {
+                    modelAssetPath: "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task",
+                    delegate: "GPU",
+                },
+                runningMode: "VIDEO",
+                numPoses: 1,
+                minPoseDetectionConfidence: 0.5,
+                minPosePresenceConfidence: 0.5,
+                minTrackingConfidence: 0.5,
+            });
+            console.log("MediaPipe PoseLandmarker ready (GPU)");
+        } catch (e) {
+            console.warn("GPU failed, trying CPU:", e.message);
+            try {
+                const vision = await FilesetResolver.forVisionTasks(
+                    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
+                );
+                this.poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
+                    baseOptions: {
+                        modelAssetPath: "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task",
+                    },
+                    runningMode: "VIDEO",
+                    numPoses: 1,
+                });
+                console.log("MediaPipe PoseLandmarker ready (CPU)");
+            } catch (e2) {
+                console.error("MediaPipe init FAILED:", e2);
+                this.updateFeedback("Pose detection unavailable. Try refreshing.", "error");
+            }
+        }
     }
 
     showAuthModal() {
@@ -301,7 +366,9 @@ class WorkoutCoach {
 
             case 'analysis':
                 this.updateUI(data);
-                this.drawSkeleton(data.pose?.landmarks, data.analysis?.is_good_form);
+                // Update skeleton color based on server's form assessment
+                // (skeleton is drawn client-side at 30+ FPS, server just updates the color)
+                this._isGoodForm = data.analysis?.is_good_form ?? true;
                 break;
 
             case 'llm_feedback':
@@ -342,18 +409,63 @@ class WorkoutCoach {
     // ── Skeleton Overlay Drawing ──
 
     drawSkeleton(landmarks, isGoodForm) {
+        // Called when new server data arrives — update TARGET positions
+        if (!landmarks || Object.keys(landmarks).length === 0) return;
+
+        this._targetLandmarks = landmarks;
+        this._skeletonIsGoodForm = isGoodForm;
+
+        // Initialize current positions on first data
+        if (Object.keys(this._currentLandmarks).length === 0) {
+            this._currentLandmarks = JSON.parse(JSON.stringify(landmarks));
+        }
+
+        // Start the animation loop if not already running
+        if (!this._animationFrameId && this.isRunning) {
+            this._startSkeletonAnimation();
+        }
+    }
+
+    _startSkeletonAnimation() {
+        const animate = () => {
+            if (!this.isRunning) {
+                this._animationFrameId = null;
+                return;
+            }
+            this._interpolateAndDraw();
+            this._animationFrameId = requestAnimationFrame(animate);
+        };
+        this._animationFrameId = requestAnimationFrame(animate);
+    }
+
+    _interpolateAndDraw() {
         const canvas = this.elements.canvas;
         const ctx = this.ctx;
         const w = canvas.width;
         const h = canvas.height;
+        const lerp = this._lerpFactor;
 
-        // Clear previous overlay
         ctx.clearRect(0, 0, w, h);
 
-        if (!landmarks || Object.keys(landmarks).length === 0) return;
+        if (Object.keys(this._targetLandmarks).length === 0) return;
 
-        const color = isGoodForm ? '#00ff88' : '#ff4444';
-        const jointColor = isGoodForm ? '#00ff88' : '#ffaa00';
+        // Interpolate current positions toward target positions
+        for (const name of Object.keys(this._targetLandmarks)) {
+            const target = this._targetLandmarks[name];
+            if (!this._currentLandmarks[name]) {
+                this._currentLandmarks[name] = { ...target };
+            } else {
+                const cur = this._currentLandmarks[name];
+                cur.x += (target.x - cur.x) * lerp;
+                cur.y += (target.y - cur.y) * lerp;
+                cur.visibility = target.visibility;
+            }
+        }
+
+        const lm = this._currentLandmarks;
+        const isGood = this._skeletonIsGoodForm;
+        const color = isGood ? '#00ff88' : '#ff4444';
+        const jointColor = isGood ? '#00ff88' : '#ffaa00';
 
         // Draw connections
         ctx.strokeStyle = color;
@@ -361,15 +473,10 @@ class WorkoutCoach {
         ctx.globalAlpha = 0.8;
 
         for (const [from, to] of this.skeletonConnections) {
-            if (landmarks[from] && landmarks[to]) {
-                const fx = (1 - landmarks[from].x) * w; // Mirror for selfie view
-                const fy = landmarks[from].y * h;
-                const tx = (1 - landmarks[to].x) * w;
-                const ty = landmarks[to].y * h;
-
+            if (lm[from] && lm[to]) {
                 ctx.beginPath();
-                ctx.moveTo(fx, fy);
-                ctx.lineTo(tx, ty);
+                ctx.moveTo(lm[from].x * w, lm[from].y * h);
+                ctx.lineTo(lm[to].x * w, lm[to].y * h);
                 ctx.stroke();
             }
         }
@@ -378,13 +485,11 @@ class WorkoutCoach {
         ctx.fillStyle = jointColor;
         ctx.globalAlpha = 0.9;
 
-        for (const [name, lm] of Object.entries(landmarks)) {
-            if (lm.visibility > 0.5) {
-                const x = (1 - lm.x) * w;
-                const y = lm.y * h;
-
+        for (const name of Object.keys(lm)) {
+            const pt = lm[name];
+            if (pt.visibility > 0.5) {
                 ctx.beginPath();
-                ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                ctx.arc(pt.x * w, pt.y * h, 6, 0, 2 * Math.PI);
                 ctx.fill();
             }
         }
@@ -658,11 +763,14 @@ class WorkoutCoach {
         }
 
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+            console.log(`Switching exercise to: ${exercise}`);
             this.ws.send(JSON.stringify({
                 type: 'config',
                 exercise: exercise,
                 coach: this.currentCoach,
             }));
+        } else {
+            console.log(`Exercise set to ${exercise} (will apply on next start)`);
         }
     }
 
@@ -726,7 +834,13 @@ class WorkoutCoach {
         this.elements.stopBtn.disabled = true;
         this.elements.videoContainer.classList.remove('active');
 
-        // Clear skeleton overlay
+        // Stop skeleton animation and clear overlay
+        if (this._animationFrameId) {
+            cancelAnimationFrame(this._animationFrameId);
+            this._animationFrameId = null;
+        }
+        this._currentLandmarks = {};
+        this._targetLandmarks = {};
         this.ctx.clearRect(0, 0, this.elements.canvas.width, this.elements.canvas.height);
 
         // Save session and show summary
@@ -843,6 +957,178 @@ class WorkoutCoach {
     }
 
     startFrameCapture() {
+        if (!this.poseLandmarker) {
+            console.error("PoseLandmarker not ready — falling back to server-side");
+            this._startServerFrameCapture();
+            return;
+        }
+        console.log("Starting client-side pose detection loop");
+
+        const video = this.elements.video;
+        const detectPose = () => {
+            if (!this.isRunning) return;
+
+            if (video.readyState >= 2 && video.currentTime !== this._lastVideoTime) {
+                this._lastVideoTime = video.currentTime;
+
+                const t0 = performance.now();
+                const result = this.poseLandmarker.detectForVideo(video, performance.now());
+                const detectMs = performance.now() - t0;
+
+                // Log performance periodically
+                if (Math.random() < 0.02) {
+                    console.log(`MediaPipe client-side: ${detectMs.toFixed(1)}ms`);
+                }
+
+                if (result.landmarks && result.landmarks.length > 0) {
+                    const landmarks = result.landmarks[0]; // First person
+                    this._currentLandmarks = landmarks;
+                    this._drawSkeletonFromLandmarks(landmarks);
+
+                    // Send angles to server at throttled rate for ML classification
+                    const now = Date.now();
+                    if (now - this._lastAnalysisSend > (1000 / this.config.analysisRate)) {
+                        this._lastAnalysisSend = now;
+                        this._sendAnglesToServer(landmarks);
+                    }
+                } else {
+                    this._currentLandmarks = null;
+                    this.ctx.clearRect(0, 0, this.elements.canvas.width, this.elements.canvas.height);
+                }
+            }
+
+            requestAnimationFrame(detectPose);
+        };
+
+        requestAnimationFrame(detectPose);
+    }
+
+    _drawSkeletonFromLandmarks(landmarks) {
+        const canvas = this.elements.canvas;
+        const ctx = this.ctx;
+        const w = canvas.width;
+        const h = canvas.height;
+
+        ctx.clearRect(0, 0, w, h);
+
+        const color = this._isGoodForm ? '#00ff88' : '#ff4444';
+        const jointColor = this._isGoodForm ? '#00ff88' : '#ffaa00';
+
+        // Map MediaPipe landmark indices to our named connections
+        const CONNECTIONS = [
+            [11, 12], // shoulders
+            [11, 13], [13, 15], // left arm
+            [12, 14], [14, 16], // right arm
+            [11, 23], [12, 24], // torso sides
+            [23, 24], // hips
+            [23, 25], [25, 27], // left leg
+            [24, 26], [26, 28], // right leg
+        ];
+
+        // Draw connections
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.globalAlpha = 0.85;
+
+        for (const [i, j] of CONNECTIONS) {
+            if (landmarks[i] && landmarks[j] &&
+                landmarks[i].visibility > 0.5 && landmarks[j].visibility > 0.5) {
+                ctx.beginPath();
+                ctx.moveTo(landmarks[i].x * w, landmarks[i].y * h);
+                ctx.lineTo(landmarks[j].x * w, landmarks[j].y * h);
+                ctx.stroke();
+            }
+        }
+
+        // Draw joints
+        ctx.fillStyle = jointColor;
+        ctx.globalAlpha = 0.9;
+
+        const KEY_JOINTS = [0, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28];
+        for (const i of KEY_JOINTS) {
+            if (landmarks[i] && landmarks[i].visibility > 0.5) {
+                ctx.beginPath();
+                ctx.arc(landmarks[i].x * w, landmarks[i].y * h, 6, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+        }
+
+        ctx.globalAlpha = 1.0;
+    }
+
+    _calculateAngle(a, b, c) {
+        // Calculate angle at point b formed by a-b-c (in radians → degrees)
+        const ba = { x: a.x - b.x, y: a.y - b.y, z: (a.z || 0) - (b.z || 0) };
+        const bc = { x: c.x - b.x, y: c.y - b.y, z: (c.z || 0) - (b.z || 0) };
+        const dot = ba.x * bc.x + ba.y * bc.y + ba.z * bc.z;
+        const magBA = Math.sqrt(ba.x ** 2 + ba.y ** 2 + ba.z ** 2);
+        const magBC = Math.sqrt(bc.x ** 2 + bc.y ** 2 + bc.z ** 2);
+        const cosAngle = Math.max(-1, Math.min(1, dot / (magBA * magBC + 1e-6)));
+        return Math.acos(cosAngle) * (180 / Math.PI);
+    }
+
+    _sendAnglesToServer(landmarks) {
+        if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
+
+        // Compute angles client-side from landmarks (matching backend's format)
+        const lm = landmarks;
+        const angles = {};
+
+        try {
+            if (lm[23] && lm[25] && lm[27]) angles.left_knee_angle = this._calculateAngle(lm[23], lm[25], lm[27]);
+            if (lm[24] && lm[26] && lm[28]) angles.right_knee_angle = this._calculateAngle(lm[24], lm[26], lm[28]);
+            if (lm[11] && lm[23] && lm[25]) angles.left_hip_angle = this._calculateAngle(lm[11], lm[23], lm[25]);
+            if (lm[12] && lm[24] && lm[26]) angles.right_hip_angle = this._calculateAngle(lm[12], lm[24], lm[26]);
+            if (lm[11] && lm[13] && lm[15]) angles.left_elbow_angle = this._calculateAngle(lm[11], lm[13], lm[15]);
+            if (lm[12] && lm[14] && lm[16]) angles.right_elbow_angle = this._calculateAngle(lm[12], lm[14], lm[16]);
+
+            // Torso angle relative to vertical
+            if (lm[11] && lm[12] && lm[23] && lm[24]) {
+                const midShoulder = { x: (lm[11].x + lm[12].x) / 2, y: (lm[11].y + lm[12].y) / 2 };
+                const midHip = { x: (lm[23].x + lm[24].x) / 2, y: (lm[23].y + lm[24].y) / 2 };
+                const torsoVec = { x: midShoulder.x - midHip.x, y: midShoulder.y - midHip.y };
+                const vertical = { x: 0, y: -1 };
+                const dot = torsoVec.x * vertical.x + torsoVec.y * vertical.y;
+                const mag = Math.sqrt(torsoVec.x ** 2 + torsoVec.y ** 2) + 1e-6;
+                angles.torso_angle = Math.acos(Math.max(-1, Math.min(1, dot / mag))) * (180 / Math.PI);
+
+                // Shoulder-hip alignment
+                const sCx = (lm[11].x + lm[12].x) / 2;
+                const hCx = (lm[23].x + lm[24].x) / 2;
+                angles.shoulder_hip_alignment = Math.abs(sCx - hCx);
+            }
+        } catch (e) {
+            // Skip if landmarks are incomplete
+            return;
+        }
+
+        // Also send landmark positions for server-side pose validation
+        const landmarkPositions = {};
+        const NAMES = {
+            0: "nose", 11: "left_shoulder", 12: "right_shoulder",
+            13: "left_elbow", 14: "right_elbow", 15: "left_wrist", 16: "right_wrist",
+            23: "left_hip", 24: "right_hip", 25: "left_knee", 26: "right_knee",
+            27: "left_ankle", 28: "right_ankle",
+        };
+        for (const [idx, name] of Object.entries(NAMES)) {
+            if (lm[idx]) {
+                landmarkPositions[name] = {
+                    x: lm[idx].x, y: lm[idx].y, z: lm[idx].z || 0,
+                    visibility: lm[idx].visibility || 0,
+                };
+            }
+        }
+
+        this.ws.send(JSON.stringify({
+            type: 'angles',
+            angles: angles,
+            landmarks: landmarkPositions,
+        }));
+    }
+
+    _startServerFrameCapture() {
+        // Fallback: send video frames to server if client-side MediaPipe failed
+        console.log("Using server-side pose estimation (fallback)");
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = this.config.videoWidth;
@@ -850,17 +1136,12 @@ class WorkoutCoach {
 
         const captureFrame = () => {
             if (!this.isRunning || !this.ws || this.ws.readyState !== WebSocket.OPEN) return;
-
             ctx.drawImage(this.elements.video, 0, 0, canvas.width, canvas.height);
             const imageData = canvas.toDataURL('image/jpeg', 0.7);
-
-            this.ws.send(JSON.stringify({
-                type: 'frame',
-                image: imageData,
-            }));
+            this.ws.send(JSON.stringify({ type: 'frame', image: imageData }));
         };
 
-        this.frameInterval = setInterval(captureFrame, 1000 / this.config.frameRate);
+        this.frameInterval = setInterval(captureFrame, 1000 / 15);
     }
 
     startDurationTimer() {
@@ -970,7 +1251,10 @@ class WorkoutCoach {
         try {
             const resp = await fetch('/api/workout-plan/current');
             const data = await resp.json();
-            this.displayPlan(data?.plan || null);
+            // Only display if there's a real saved plan (not null/message-only)
+            if (data?.plan) {
+                this.displayPlan(data.plan);
+            }
         } catch (e) {
             console.error('Failed to load plan:', e);
         }

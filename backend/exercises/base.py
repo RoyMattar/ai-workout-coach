@@ -81,17 +81,20 @@ class RepCounter:
         """Update phase and count reps on complete cycles"""
         if new_phase != self.phase:
             self.phase_history.append(self.phase)
-            
-            # Count rep when returning to standing from ascending
-            if (self.phase == ExercisePhase.ASCENDING and 
-                new_phase == ExercisePhase.STANDING):
-                self.count += 1
-            
+
+            # Count rep when returning to standing from ascending or descending
+            # (ascending→standing for squat/lunge/deadlift; descending→standing for bicep curl)
+            if (self.phase in (ExercisePhase.ASCENDING, ExercisePhase.DESCENDING)
+                    and new_phase == ExercisePhase.STANDING):
+                # Only count if we went through BOTTOM at some point
+                if ExercisePhase.BOTTOM in self.phase_history[-5:]:
+                    self.count += 1
+
             # For push-ups: count when returning to plank from pushing
-            if (self.phase == ExercisePhase.PUSHING and 
+            if (self.phase == ExercisePhase.PUSHING and
                 new_phase == ExercisePhase.PLANK):
                 self.count += 1
-                
+
             self.phase = new_phase
 
 

@@ -35,10 +35,11 @@ class BicepCurlAnalyzer(ExerciseAnalyzer):
     INCOMPLETE_ROM_THRESHOLD = 75  # Elbow angle at top of curl
     ELBOW_DRIFT_THRESHOLD = 0.10  # Max elbow x drift from hip x
 
-    # Phase detection thresholds (based on elbow angle)
-    STANDING_THRESHOLD = 150  # Arms roughly straight (at sides)
-    ASCENDING_THRESHOLD = 100  # Mid-curl
-    BOTTOM_THRESHOLD = 60  # Top of curl (most bent)
+    # Phase detection thresholds (relaxed for webcam front-view angle compression)
+    # From a front-facing webcam, elbow angles appear much smaller than actual
+    STANDING_THRESHOLD = 130  # Arms at sides (real data shows 128-145)
+    ASCENDING_THRESHOLD = 118  # Mid-curl
+    BOTTOM_THRESHOLD = 108  # Top of curl (real data shows 99-112)
 
     @property
     def exercise_name(self) -> str:
